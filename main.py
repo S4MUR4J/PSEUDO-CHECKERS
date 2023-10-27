@@ -3,27 +3,40 @@ import math
 import time
 from array import *
 
-# ? 0 - empty
-# ? 1 - Red
-# ? 2 - White
+# ? ' ' - empty
+# ? 'R' - Red
+# ? 'W' - White
 
 map = [
-        [0, 2, 0, 2, 0, 2, 0, 2],
-        [2, 0, 2, 0, 2, 0, 2, 0],
-        [0, 2, 0, 2, 0, 2, 0, 2],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 0],
+        [' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W'],
+        ['W', ' ', 'W', ' ', 'W', ' ', 'W', ' '],
+        [' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W'],
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+        ['R', ' ', 'R', ' ', 'R', ' ', 'R', ' '],
+        [' ', 'R', ' ', 'R', ' ', 'R', ' ', 'R'],
+        ['R', ' ', 'R', ' ', 'R', ' ', 'R', ' '],
     ]
 
 def draw_map():
     os.system("cls")
-    for i in map:
-        for j in i:
-            print("|" + str(j), end="")
-        print("|")
+    i = 0
+    j = 0
+
+    while i < len(map):
+        if i == 0:
+            print('    A B C D E F G H \n')
+        while j < len(map):
+            if j == 0:
+                print(f"{len(map) - i}  ", end="")
+            print("|" + str(map[i][j]), end="")
+            j += 1
+            if j == len(map):
+                print(f"|  {len(map) - i}")
+        j = 0
+        i += 1
+        if i == len(map):
+            print('\n    A B C D E F G H')
 
 
 def main():
