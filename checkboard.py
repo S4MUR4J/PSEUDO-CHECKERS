@@ -1,12 +1,11 @@
 from constants import Player, Vector2
 
 
-class Checkboard: 
+class Checkboard:
+    size: int = None
+    board: list[list[chr]] = []
 
-    size : int = None
-    board : list[list[chr]] = []
-
-    def __init__(self, checkboard_size : int) -> None:
+    def __init__(self, checkboard_size: int) -> None:
         self.size = checkboard_size
         self.board = self.__fill_checkboard()
 
@@ -32,7 +31,6 @@ class Checkboard:
 
         return checkboard
 
-
-    def move_checker(self, old_pos: Vector2, new_pos: Vector2, player : chr) -> None:
+    def move_checker(self, old_pos: Vector2, new_pos: Vector2, player: chr) -> None:
         self.board[old_pos.x][old_pos.y] = Player.Empty.value
         self.board[new_pos.x][new_pos.y] = player

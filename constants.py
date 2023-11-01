@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class Player(Enum):
-    White : chr = 'W' 
-    Red : chr = 'R'
-    Empty : chr = ' '
+    White: chr = "W"
+    Red: chr = "R"
+    Empty: chr = " "
 
 
 class Vector2:
