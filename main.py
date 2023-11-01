@@ -1,43 +1,40 @@
 import os
-import math
-import time
 import random
 from array import *
-
+from types import NoneType
+from checkboard import Checkboard
+from constants import Turn, Vector2
 from game import Game
+
 from ui import UI
-
-# ? ' ' - empty
-# ? 'R' - Red
-# ? 'W' - White
-
 n = 6
 
-def checkers_able_move(player_turn: bool, map: list[list[chr]]) -> list[list[int]]:
-    checker = "W" if player_turn == True else "R"
+
+def checkers_able_move(checkers: chr, map: list[list[chr]]) -> list[list[int]]:
+    checker = checkers
     checker_can_move = []
 
     for i in range(n):
         for j in range(n):
             if map[i][j] == checker and len(can_move(i, j, map)) > 0:
-                checker_can_move.append([i, j])
+                checker_can_move.append(Vector2(i, j))
 
     print(checker_can_move)
     return checker_can_move
 
 
-def can_move(x : int, y: int, map: list[list[chr]]) -> list[list[int]]:
-    NE = [x + 1, y + 1]
-    NW = [x + 1, y - 1]
-    SE = [x - 1, y + 1]
-    SW = [x - 1, y - 1]
+def can_move(x: int, y: int, map: list[list[chr]]) -> list[Vector2]:
+    NE = Vector2(x + 1, y + 1)
+    NW = Vector2(x + 1, y - 1)
+    SE = Vector2(x - 1, y + 1)
+    SW = Vector2(x - 1, y - 1)
     all_moves = [NE, NW, SE, SW]
 
     able_moves = []
     for dir in all_moves:
-        if not validate_indexes(dir[0]) or not validate_indexes(dir[1]):
+        if not validate_indexes(dir.x) or not validate_indexes(dir.y):
             continue
-        if map[dir[0]][dir[1]] == " ":
+        if map[dir.x][dir.y] == " ":
             able_moves.append(dir)
 
     return able_moves
@@ -45,36 +42,42 @@ def can_move(x : int, y: int, map: list[list[chr]]) -> list[list[int]]:
 
 def validate_indexes(index: int) -> bool:
     return 0 <= index < n - 1
-    
-def move(checkers: list, map, white_turn) -> None:
-    if (len(checkers) == 0):
-        print('No moves!!!!')
+
+
+def move_old(checkers: list[Vector2], map) -> (Vector2, Vector2):
+    if len(checkers) == 0:
+        print("No moves!!!!")
         return
 
     choose = random.randrange(0, len(checkers))
     checker = checkers[choose]
-    moves = can_move(checker[0], checker[1], map)
+    moves = can_move(checker.x, checker.y, map)
     choose2 = random.randrange(0, len(moves))
     move = moves[choose2]
 
-    map[checker[0]][checker[1]] = ' '
-    map[move[0]][move[1]] = 'W' if white_turn else 'R'
+    return checker, move
 
-
-
-def main():
+def main() -> None:
     ui = UI()
-    game = Game(n)
+    checkboard = Checkboard(n)
+    game = Game()
+
+    ui.draw_checkboard(checkboard.board, checkboard.size)
 
     while True:
-        ui.draw_checkboard(game.checkboard, game.checkboard_size) 
-        move(checkers_able_move(game.white_turn, game.checkboard), game.checkboard, game.white_turn)
-        
-        game.change_turn()
-        next_step = input()
-        if next_step.upper() == 'Q':
+        quit = input('Q - wyjście: ')
+        if quit.upper() == 'Q':
             break
 
+        os.system('cls')
+        game.change_turn()
+        result = move_old(
+            checkers_able_move(game.get_turn_checker, checkboard.board), checkboard.board
+        )
+
+        if type(result) is not NoneType:
+            checkboard.move_checker(result[0], result[1], game.get_turn_checker)
+        ui.draw_checkboard(checkboard.board, checkboard.size)
 
 if __name__ == "__main__":
     main()

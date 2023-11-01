@@ -12,5 +12,5 @@ class UI:
             for j in range(checkboard_size):
                 print(f'|{str(checkboard[i][j])}', end='')
                 if j == checkboard_size - 1:
-                    print(f'|  {checkboard_size - 1}')
+                    print(f'|  {checkboard_size - i}')
         print('')
