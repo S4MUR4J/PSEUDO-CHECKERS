@@ -2,6 +2,7 @@ from constants import Player
 
 
 class UI:
+    # Inicjuj to z with UI wtedy tylko wynik pokaże <3
     def __init__(self) -> None:
         pass
 
