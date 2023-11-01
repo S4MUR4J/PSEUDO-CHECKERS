@@ -1,4 +1,5 @@
 import os
+from types import NoneType
 
 from algoritm import Algorithm
 from checkboard import Checkboard
@@ -22,10 +23,10 @@ def main() -> None:
         os.system("cls")
         game.change_turn()
         result = algorithm.find_best_checker(
-            checkboard.board, checkboard.size, game.get_turn_checker
+            checkboard.board, checkboard.size, game.curr_player
         )
 
-        checkboard.move_checker(result[0], result[1], game.get_turn_checker)
+        checkboard.move_checker(result[0], result[1], game.curr_player)
         ui.draw_checkboard(checkboard.board, checkboard.size)
 
 

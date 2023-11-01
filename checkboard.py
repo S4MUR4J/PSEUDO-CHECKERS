@@ -31,6 +31,6 @@ class Checkboard:
 
         return checkboard
 
-    def move_checker(self, old_pos: Vector2, new_pos: Vector2, player: chr) -> None:
+    def move_checker(self, old_pos: Vector2, new_pos: Vector2, player: Player) -> None:
         self.board[old_pos.x][old_pos.y] = Player.Empty.value
-        self.board[new_pos.x][new_pos.y] = player
+        self.board[new_pos.x][new_pos.y] = player.value
