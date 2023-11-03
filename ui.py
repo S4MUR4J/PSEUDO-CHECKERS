@@ -22,16 +22,18 @@ class UI:
         self.__draw_checkboard(board, board_size)
         self.__draw_heuristics(board, board_size)
         sleep(self.__sleep_time)
-        if who_won != Player.Empty:
-            print(f'{"Biały" if who_won == Player.White else "Czerwony"} wygrał grę \n')
 
-    def generate_raport(self, board_size: int, who_won: Player) -> None:
+    def generate_raport(
+        self, board_size: int, who_won: Player, white_score: int, red_score: int
+    ) -> None:
         file_name = f"MIN_MAX_{datetime.now().strftime('%Y-%m-%d|%H-%M-%S')}.txt"
 
         raport = [
             "Raport algorytmu mini-max w grze w warcaby: \n\n",
             f"Gra wykonana na szachownicy: {board_size} x {board_size}. \n",
             f'Rozgrywkę wygrał: {"Biały" if who_won == Player.White else "Czerwony"}. \n',
+            f"Liczba punktów gracza białego: {white_score} \n"
+            f"Liczba punktów gracza czerwonego: {red_score} \n"
             # TODO Liczba ruchów
             # TODO Kolejność ruchów
             # TODO dodatkowe

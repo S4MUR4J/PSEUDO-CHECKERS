@@ -8,12 +8,17 @@ class Game:
     who_won: Player = None
     is_end_game: bool = None
 
+    white_score: int = None
+    red_score: int = None
+
     def __init__(self, size: int = 8) -> None:
         self.board_size = size
         self.__fill_board()
         self.curr_player = Player.White
         self.who_won = Player.Empty
         self.is_end_game = False
+        self.white_score = 0
+        self.red_score = 0
 
     def __fill_board(self) -> None:
         self.board = []
@@ -61,8 +66,20 @@ class Game:
             Player.Red if self.curr_player == Player.White else Player.White
         )
 
+    def __score_king(self, pos: Vector2) -> None:
+        if (self.curr_player == Player.White and pos.x == self.board_size - 1) or (
+            self.curr_player == Player.Red and pos.x == 0
+        ):
+            self.board[pos.x][pos.y] = Player.Empty
+
+            if self.curr_player == Player.White:
+                self.white_score += 1
+            if self.curr_player == Player.Red:
+                self.red_score += 1
+
     def play_turn(self, old_pos: Vector2, new_pos: Vector2) -> None:
         self.__move_checker(old_pos, new_pos)
+        self.__score_king(new_pos)
         self.__update_who_won()
         if not self.is_end_game:
             self.__change_turn()
