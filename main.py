@@ -8,7 +8,6 @@ from ui import UI
 def main() -> None:
     ui = UI()
     game = Game(ui.checkboard_size)
-    algorithm = Algorithm()
 
     while True:
         if ui.with_visualization:
