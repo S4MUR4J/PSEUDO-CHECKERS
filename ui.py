@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from time import sleep
 
 from constants import Player
@@ -24,9 +25,25 @@ class UI:
         if who_won != Player.Empty:
             print(f'{"Biały" if who_won == Player.White else "Czerwony"} wygrał grę \n')
 
-    def generate_raport(self) -> None:
-        # TODO Generowanie raportu
-        print("Raport został wygenerowany na pulpicie B)... \n")
+    def generate_raport(self, board_size: int, who_won: Player) -> None:
+        file_name = f"MIN_MAX_{datetime.now().strftime('%Y-%m-%d|%H-%M-%S')}.txt"
+
+        raport = [
+            "Raport algorytmu mini-max w grze w warcaby: \n\n",
+            f"Gra wykonana na szachownicy: {board_size} x {board_size}. \n",
+            f'Rozgrywkę wygrał: {"Biały" if who_won == Player.White else "Czerwony"}. \n',
+            # TODO Liczba ruchów
+            # TODO Kolejność ruchów
+            # TODO dodatkowe
+        ]
+
+        file = open(file_name, "w")
+
+        for data in raport:
+            file.writelines(data)
+        file.close()
+
+        print(f"W folderze projektu został wygenerowany raport: {file_name}... \n")
 
     def __read_checkboard_size(self) -> int:
         while True:

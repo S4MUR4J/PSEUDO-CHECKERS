@@ -15,7 +15,7 @@ def main() -> None:
             )
 
         if game.is_end_game:
-            ui.generate_raport()
+            ui.generate_raport(board_size=game.board_size, who_won=game.who_won)
             break
 
         result = algorithm.find_best_checker(

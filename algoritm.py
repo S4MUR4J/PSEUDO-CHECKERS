@@ -4,6 +4,14 @@ from constants import Player, Vector2
 
 
 class Algorithm:
+    def get_board_heuristics(board: list[list[Player]]):
+        # TODO przygotuj heurystykę planszy
+        pass
+
+    def minimax_algorithm():
+        # TODO przygotuj algorytm
+        pass
+
     def find_best_checker(
         self, board: list[list[Player]], board_size: int, curr_player: Player
     ) -> (Vector2, Vector2):
