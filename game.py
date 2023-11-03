@@ -1,4 +1,4 @@
-from constants import Player, Vector2
+from constants import Directions, Player, Vector2
 
 
 class Game:
@@ -41,10 +41,20 @@ class Game:
             self.board.append(row)
 
     def __move_checker(self, old_pos: Vector2, new_pos: Vector2) -> None:
+        if abs(old_pos.x - new_pos.x) > 1:
+            capt_pos = Vector2(
+                (old_pos.x + new_pos.x) // 2, (old_pos.y + new_pos.y) // 2
+            )
+            self.board[capt_pos.x][capt_pos.y] = Player.Empty
+            if self.curr_player == Player.White:
+                self.white_score += 1
+            else:
+                self.red_score += 1
+
         self.board[old_pos.x][old_pos.y] = Player.Empty
         self.board[new_pos.x][new_pos.y] = self.curr_player
 
-    def __update_who_won(self) -> None:
+    def __update_game_end(self) -> None:
         any_white_checker = False
         any_red_checker = False
 
@@ -77,9 +87,45 @@ class Game:
             if self.curr_player == Player.Red:
                 self.red_score += 1
 
+    def __validate_indexes(self, new_pos: Vector2) -> bool:
+        return 0 <= new_pos.x < self.board_size and 0 <= new_pos.y < self.board_size
+
+    def __possible_moves(self, pos: Vector2) -> list[Vector2]:
+        possible_moves = []
+        directions = Directions().get()
+
+        if self.board[pos.x][pos.y] == self.curr_player:
+            for dir in directions:
+                new_pos = Vector2(pos.x + dir.x, pos.y + dir.y)
+                if self.__validate_indexes(new_pos):
+                    if self.board[new_pos.x][new_pos.y] == Player.Empty:
+                        possible_moves.append(new_pos)
+                    elif self.board[new_pos.x][new_pos.y] == (
+                        Player.Red if self.curr_player == Player.White else Player.White
+                    ):
+                        capt_pos = Vector2(new_pos.x + dir.x, new_pos.y + dir.y)
+                        if (
+                            self.__validate_indexes(capt_pos)
+                            and self.board[capt_pos.x][capt_pos.y] == Player.Empty
+                        ):
+                            possible_moves.append(capt_pos)
+
+        return possible_moves
+
+    def all_possible_moves(self) -> list[(Vector2, Vector2)]:
+        all_possible_moves = []
+
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                if self.board[x][y] == self.curr_player:
+                    for move in self.__possible_moves(Vector2(x, y)):
+                        all_possible_moves.append((move, Vector2(x, y)))
+
+        return all_possible_moves
+
     def play_turn(self, old_pos: Vector2, new_pos: Vector2) -> None:
         self.__move_checker(old_pos, new_pos)
         self.__score_king(new_pos)
-        self.__update_who_won()
+        self.__update_game_end()
         if not self.is_end_game:
             self.__change_turn()

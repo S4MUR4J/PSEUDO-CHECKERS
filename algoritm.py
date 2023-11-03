@@ -79,4 +79,4 @@ class Algorithm:
         return Player.White if player == Player.Red else Player.Red
 
     def __validate_indexes(self, index: int, board_size: int) -> bool:
-        return 0 <= index < board_size - 1
+        return 0 <= index < board_size
