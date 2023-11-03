@@ -38,12 +38,6 @@ def main() -> None:
 
         # ? END SIMULATE PART
 
-        # result = algorithm.find_best_checker(
-        #     board=game.board, board_size=game.board_size, curr_player=game.curr_player
-        # )
-
-        # game.play_turn(old_pos=result[0], new_pos=result[1])
-
 
 if __name__ == "__main__":
     main()
