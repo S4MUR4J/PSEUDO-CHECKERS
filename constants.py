@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 
 
@@ -7,10 +8,7 @@ class Player(Enum):
     Empty: chr = " "
 
 
+@dataclass
 class Vector2:
     x: int = None
     y: int = None
-
-    def __init__(self, x: int, y: int) -> None:
-        self.x = x
-        self.y = y

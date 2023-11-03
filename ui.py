@@ -15,14 +15,14 @@ class UI:
         self.__sleep_time = self.__read_sleep_time()
 
     def visualization(
-        self, board: list[list[chr]], board_size: int, who_won: Player
+        self, board: list[list[Player]], board_size: int, who_won: Player
     ) -> None:
-        os.system("cls")
+        os.system("clear")
         self.__draw_checkboard(board, board_size)
         self.__draw_heuristics(board, board_size)
         sleep(self.__sleep_time)
-        if who_won != Player.White:
-            print(f'{'Biały' if who_won == Player.White else 'Czerwony'} wygrał grę \n')
+        if who_won != Player.Empty:
+            print(f'{"Biały" if who_won == Player.White else "Czerwony"} wygrał grę \n')
 
     def generate_raport(self) -> None:
         # TODO Generowanie raportu
@@ -63,22 +63,22 @@ class UI:
     def __wrong_input(self) -> None:
         input("Nieprawidłowy typ danych, naciśnij klawisz by powtórzyć...")
 
-    def __draw_checkboard(
-        self, checkboard: list[list[chr]], checkboard_size: int
-    ) -> None:
-        for x in range(checkboard_size):
+    # To moze byc jedna funkcja w przyszłości
+
+    def __draw_checkboard(self, board: list[list[Player]], board_size: int) -> None:
+        for x in range(board_size):
             if x == 0:
-                for i in range(checkboard_size):
+                for i in range(board_size):
                     print(f" {chr(65 + i)}", end="")
                 print("\n")
-            for y in range(checkboard_size):
-                print(f"|{str(checkboard[x][y])}", end="")
-                if y == checkboard_size - 1:
-                    print(f"|  {checkboard_size - x}")
+            for y in range(board_size):
+                print(f"|{board[x][y].value}", end="")
+                if y == board_size - 1:
+                    print(f"|  {board_size - x}")
         print("")
 
     def __draw_heuristics(
-        self, checkboard: list[list[chr]], checkboard_size: int
+        self, board: list[list[Player]], checkboard_size: int
     ) -> None:
         mock = "X"
 
