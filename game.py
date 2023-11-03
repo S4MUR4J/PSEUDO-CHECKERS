@@ -90,6 +90,7 @@ class Game:
     def __validate_indexes(self, new_pos: Vector2) -> bool:
         return 0 <= new_pos.x < self.board_size and 0 <= new_pos.y < self.board_size
 
+    # TODO dodać parametr wywołujący sprawdzanie skoków
     def __possible_moves(self, pos: Vector2) -> list[Vector2]:
         possible_moves = []
         directions = Directions().get()
@@ -98,7 +99,10 @@ class Game:
             for dir in directions:
                 new_pos = Vector2(pos.x + dir.x, pos.y + dir.y)
                 if self.__validate_indexes(new_pos):
-                    if self.board[new_pos.x][new_pos.y] == Player.Empty:
+                    if self.board[new_pos.x][new_pos.y] == Player.Empty and (
+                        (self.curr_player == Player.White and dir.x > 0)
+                        or (self.curr_player == Player.Red and dir.x < 0)
+                    ):
                         possible_moves.append(new_pos)
                     elif self.board[new_pos.x][new_pos.y] == (
                         Player.Red if self.curr_player == Player.White else Player.White
