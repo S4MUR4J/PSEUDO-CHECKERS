@@ -16,15 +16,25 @@ class UI:
         self.__sleep_time = self.__read_sleep_time()
 
     def visualization(
-        self, board: list[list[Player]], board_size: int, who_won: Player
+        self,
+        board: list[list[Player]],
+        board_size: int,
+        who_won: Player,
+        last_move: str,
     ) -> None:
         os.system("clear")
         self.__draw_checkboard(board, board_size)
         self.__draw_heuristics(board, board_size)
+        self.__write_move(last_move)
         sleep(self.__sleep_time)
 
     def generate_raport(
-        self, board_size: int, who_won: Player, white_score: int, red_score: int
+        self,
+        board_size: int,
+        who_won: Player,
+        white_score: int,
+        red_score: int,
+        tour_count: int,
     ) -> None:
         file_name = f"MIN_MAX_{datetime.now().strftime('%Y-%m-%d|%H-%M-%S')}.txt"
 
@@ -34,7 +44,7 @@ class UI:
             f'Rozgrywkę wygrał: {"Biały" if who_won == Player.White else "Czerwony"}. \n',
             f"Liczba punktów gracza białego: {white_score} \n"
             f"Liczba punktów gracza czerwonego: {red_score} \n"
-            # TODO Liczba ruchów
+            f"Gra trwała {tour_count} tur. \n"
             # TODO Kolejność ruchów
             # TODO dodatkowe
         ]
@@ -83,6 +93,9 @@ class UI:
         input("Nieprawidłowy typ danych, naciśnij klawisz by powtórzyć...")
 
     # To moze byc jedna funkcja w przyszłości
+
+    def __write_move(self, move: str) -> None:
+        print(move)
 
     def __draw_checkboard(self, board: list[list[Player]], board_size: int) -> None:
         for x in range(board_size):

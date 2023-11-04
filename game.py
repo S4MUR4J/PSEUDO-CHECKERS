@@ -7,6 +7,8 @@ class Game:
     curr_player: Player = None
     who_won: Player = None
     is_end_game: bool = None
+    tour_count: int = None
+    move_history: list[str] = []
 
     white_score: int = None
     red_score: int = None
@@ -19,6 +21,8 @@ class Game:
         self.is_end_game = False
         self.white_score = 0
         self.red_score = 0
+        self.tour_count = 0
+        self.list_string = []
 
     def __fill_board(self) -> None:
         self.board = []
@@ -53,6 +57,9 @@ class Game:
 
         self.board[old_pos.x][old_pos.y] = Player.Empty
         self.board[new_pos.x][new_pos.y] = self.curr_player
+        self.move_history.append(
+            f"{chr(65 + old_pos.x)}{old_pos.y + 1} -> {chr(65 + new_pos.x)}{new_pos.y + 1} \n"
+        )
 
     def __update_game_end(self) -> None:
         any_white_checker = False
@@ -131,5 +138,6 @@ class Game:
         self.__move_checker(old_pos, new_pos)
         self.__score_king(new_pos)
         self.__update_game_end()
+        self.tour_count += 1
         if not self.is_end_game:
             self.__change_turn()

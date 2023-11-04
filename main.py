@@ -12,7 +12,12 @@ def main() -> None:
     while True:
         if ui.with_visualization:
             ui.visualization(
-                board=game.board, board_size=game.board_size, who_won=game.who_won
+                board=game.board,
+                board_size=game.board_size,
+                who_won=game.who_won,
+                last_move=game.move_history[-1]
+                if len(game.move_history) != 0
+                else "Start \n",
             )
 
         if game.is_end_game:
@@ -21,6 +26,7 @@ def main() -> None:
                 who_won=game.who_won,
                 white_score=game.white_score,
                 red_score=game.red_score,
+                tour_count=game.tour_count,
             )
             break
 
