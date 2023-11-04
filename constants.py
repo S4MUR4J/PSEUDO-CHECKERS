@@ -22,12 +22,3 @@ class Directions:
 
     def get(self):
         return [self.NW, self.NE, self.SW, self.SE]
-
-
-def directions() -> list[Vector2]:
-    return [
-        Vector2(-1, -1),  # NW
-        Vector2(-1, 1),  # NE
-        Vector2(1, -1),  # SW
-        Vector2(1, 1),  # SE
-    ]

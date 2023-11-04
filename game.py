@@ -8,6 +8,7 @@ class Game:
     who_won: Player = None
     is_end_game: bool = None
     tour_count: int = None
+    must_move_checker: Vector2 = None
     move_history: list[str] = []
 
     white_score: int = None
@@ -22,6 +23,7 @@ class Game:
         self.white_score = 0
         self.red_score = 0
         self.tour_count = 0
+        self.must_move_checker = None
         self.list_string = []
 
     def __fill_board(self) -> None:
@@ -97,7 +99,14 @@ class Game:
     def __validate_indexes(self, new_pos: Vector2) -> bool:
         return 0 <= new_pos.x < self.board_size and 0 <= new_pos.y < self.board_size
 
-    # TODO dodać parametr wywołujący sprawdzanie skoków
+    def __is_next_capture_possible(self, pos: Vector2) -> bool:
+        possible_moves = self.__possible_moves(pos)
+        for move in possible_moves:
+            if abs(move.x - pos.x) > 1:
+                return True
+
+        return False
+
     def __possible_moves(self, pos: Vector2) -> list[Vector2]:
         possible_moves = []
         directions = Directions().get()
@@ -126,11 +135,15 @@ class Game:
     def all_possible_moves(self) -> list[(Vector2, Vector2)]:
         all_possible_moves = []
 
-        for x in range(self.board_size):
-            for y in range(self.board_size):
-                if self.board[x][y] == self.curr_player:
-                    for move in self.__possible_moves(Vector2(x, y)):
-                        all_possible_moves.append((move, Vector2(x, y)))
+        if self.must_move_checker is not None:
+            for move in self.__possible_moves(self.must_move_checker):
+                all_possible_moves.append((move, self.must_move_checker))
+        else:
+            for x in range(self.board_size):
+                for y in range(self.board_size):
+                    if self.board[x][y] == self.curr_player:
+                        for move in self.__possible_moves(Vector2(x, y)):
+                            all_possible_moves.append((move, Vector2(x, y)))
 
         return all_possible_moves
 
@@ -139,5 +152,10 @@ class Game:
         self.__score_king(new_pos)
         self.__update_game_end()
         self.tour_count += 1
-        if not self.is_end_game:
-            self.__change_turn()
+
+        if abs(old_pos.x - new_pos.x) > 1 and self.__is_next_capture_possible(new_pos):
+            self.must_move_checker = new_pos
+        else:
+            self.must_move_checker = None
+            if not self.is_end_game:
+                self.__change_turn()
