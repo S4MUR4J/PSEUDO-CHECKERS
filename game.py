@@ -107,7 +107,32 @@ class Game:
 
         return False
 
-    def __possible_moves(self, pos: Vector2) -> list[Vector2]:
+    def __can_capture(self, pos: Vector2) -> bool:
+        directions = Directions().get()
+        for dir in directions:
+            next_pos = Vector2(pos.x + dir.x, pos.y + dir.y)
+            if self.__validate_indexes(next_pos):
+                if self.board[next_pos.x][next_pos.y] == (
+                    Player.Red if self.curr_player == Player.White else Player.White
+                ):
+                    capt_pos = Vector2(next_pos.x + dir.x, next_pos.y + dir.y)
+                    if (
+                        self.__validate_indexes(capt_pos)
+                        and self.board[capt_pos.x][capt_pos.y] == Player.Empty
+                    ):
+                        return True
+        return False
+
+    def __capture_duty(self) -> bool:
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                if self.board[x][y] == self.curr_player:
+                    if self.__can_capture(Vector2(x, y)):
+                        return True
+
+    def __possible_moves(
+        self, pos: Vector2, must_capture: bool = False
+    ) -> list[Vector2]:
         possible_moves = []
         directions = Directions().get()
 
@@ -115,9 +140,13 @@ class Game:
             for dir in directions:
                 new_pos = Vector2(pos.x + dir.x, pos.y + dir.y)
                 if self.__validate_indexes(new_pos):
-                    if self.board[new_pos.x][new_pos.y] == Player.Empty and (
-                        (self.curr_player == Player.White and dir.x > 0)
-                        or (self.curr_player == Player.Red and dir.x < 0)
+                    if (
+                        self.board[new_pos.x][new_pos.y] == Player.Empty
+                        and (
+                            (self.curr_player == Player.White and dir.x > 0)
+                            or (self.curr_player == Player.Red and dir.x < 0)
+                        )
+                        and not must_capture
                     ):
                         possible_moves.append(new_pos)
                     elif self.board[new_pos.x][new_pos.y] == (
@@ -134,15 +163,16 @@ class Game:
 
     def all_possible_moves(self) -> list[(Vector2, Vector2)]:
         all_possible_moves = []
+        must_capture = self.__capture_duty()
 
         if self.must_move_checker is not None:
-            for move in self.__possible_moves(self.must_move_checker):
+            for move in self.__possible_moves(self.must_move_checker, must_capture):
                 all_possible_moves.append((move, self.must_move_checker))
         else:
             for x in range(self.board_size):
                 for y in range(self.board_size):
                     if self.board[x][y] == self.curr_player:
-                        for move in self.__possible_moves(Vector2(x, y)):
+                        for move in self.__possible_moves(Vector2(x, y), must_capture):
                             all_possible_moves.append((move, Vector2(x, y)))
 
         return all_possible_moves
