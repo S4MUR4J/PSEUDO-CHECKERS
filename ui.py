@@ -19,13 +19,10 @@ class UI:
         self,
         board: list[list[Player]],
         board_size: int,
-        who_won: Player,
-        last_move: str,
     ) -> None:
-        os.system("clear")
+        os.system("cls")
         self.__draw_checkboard(board, board_size)
         self.__draw_heuristics(board, board_size)
-        self.__write_move(last_move)
         sleep(self.__sleep_time)
 
     def generate_raport(
@@ -36,15 +33,15 @@ class UI:
         red_score: int,
         tour_count: int,
     ) -> None:
-        file_name = f"MIN_MAX_{datetime.now().strftime('%Y-%m-%d|%H-%M-%S')}.txt"
+        file_name = f"MIN_MAX_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
 
         raport = [
             "Raport algorytmu mini-max w grze w warcaby: \n\n",
             f"Gra wykonana na szachownicy: {board_size} x {board_size}. \n",
-            f'Rozgrywkę wygrał: {"Biały" if who_won == Player.White else "Czerwony"}. \n',
-            f"Liczba punktów gracza białego: {white_score} \n"
-            f"Liczba punktów gracza czerwonego: {red_score} \n"
-            f"Gra trwała {tour_count} tur. \n"
+            f'Rozgrywke wygral: {"Biały" if who_won == Player.White else "Czerwony"}. \n',
+            f"Liczba punktow gracza bialego: {white_score} \n"
+            f"Liczba punktow gracza czerwonego: {red_score} \n"
+            f"Gra trwala {tour_count} tur. \n"
             # TODO Kolejność ruchów
             # TODO dodatkowe
         ]
@@ -104,7 +101,7 @@ class UI:
                     print(f" {chr(65 + i)}", end="")
                 print("\n")
             for y in range(board_size):
-                print(f"|{board[x][y].value}", end="")
+                print(f"|{board[board_size - x - 1][board_size - y - 1].value}", end="")
                 if y == board_size - 1:
                     print(f"|  {board_size - x}")
         print("")

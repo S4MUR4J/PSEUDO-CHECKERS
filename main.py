@@ -14,10 +14,6 @@ def main() -> None:
             ui.visualization(
                 board=game.board,
                 board_size=game.board_size,
-                who_won=game.who_won,
-                last_move=game.move_history[-1]
-                if len(game.move_history) != 0
-                else "Start \n",
             )
 
         if game.is_end_game:
