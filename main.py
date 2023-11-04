@@ -35,8 +35,6 @@ def main() -> None:
             new_pos = move[0]
             old_pos = move[1]
             game.play_turn(old_pos, new_pos)
-        else:
-            continue
 
         # ? END SIMULATE PART
 

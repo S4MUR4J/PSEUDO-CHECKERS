@@ -175,6 +175,12 @@ class Game:
                         for move in self.__possible_moves(Vector2(x, y), must_capture):
                             all_possible_moves.append((move, Vector2(x, y)))
 
+        if len(all_possible_moves) == 0:
+            self.is_end_game = True
+            self.who_won = (
+                Player.White if self.curr_player == Player.Red else Player.Red
+            )
+
         return all_possible_moves
 
     def play_turn(self, old_pos: Vector2, new_pos: Vector2) -> None:
