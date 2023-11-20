@@ -1,12 +1,12 @@
 import random
 
 from algoritm import Algorithm
+from control import Control
 from game import Game
-from ui import UI
 
 
 def main() -> None:
-    ui = UI()
+    ui = Control()
     game = Game(ui.checkboard_size)
     algorithm = Algorithm(5)
 
@@ -48,6 +48,8 @@ def main() -> None:
         #     game.play_turn(old_pos, new_pos)
 
         # ? END SIMULATE PART
+
+    ui.end_simulation()
 
 
 if __name__ == "__main__":

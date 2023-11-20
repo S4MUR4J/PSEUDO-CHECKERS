@@ -9,6 +9,18 @@ class Player(Enum):
 
 
 @dataclass
+class Mode:
+    order: int
+    message: str
+
+
+class EnemyMode(Enum):
+    random = Mode(1, "1. Losowy")
+    suboptimal = Mode(2, "Suboptymalny")
+    minimax = Mode(3, "Mini-max")
+
+
+@dataclass
 class Vector2:
     x: int
     y: int
