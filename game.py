@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from constants import Directions, Player, Vector2
 
 
@@ -160,6 +162,9 @@ class Game:
                             possible_moves.append(capt_pos)
 
         return possible_moves
+
+    def deep_copy(self):
+        return deepcopy(self)
 
     def all_possible_moves(self) -> list[(Vector2, Vector2)]:
         all_possible_moves = []
