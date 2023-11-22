@@ -188,6 +188,12 @@ class Game:
 
         return all_possible_moves
 
+    def get_rating(self) -> int:
+        if self.curr_player == Player.White:
+            return self.white_score - self.red_score
+        else:
+            return self.red_score - self.white_score
+
     def play_turn(self, old_pos: Vector2, new_pos: Vector2) -> None:
         self.__move_checker(old_pos, new_pos)
         self.__score_king(new_pos)

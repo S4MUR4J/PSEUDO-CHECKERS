@@ -1,6 +1,5 @@
-import random
-
-from algoritm import Algorithm
+from algoritm import minimax_algorithm
+from constants import Infinity
 from control import Control
 from game import Game
 
@@ -8,7 +7,6 @@ from game import Game
 def main() -> None:
     ui = Control()
     game = Game(ui.checkboard_size)
-    algorithm = Algorithm(5)
 
     while True:
         if ui.with_visualization:
@@ -30,8 +28,12 @@ def main() -> None:
         # ? SIMULATE PART
 
         game_copy = game.deep_copy()
-        _, move = algorithm.minimax_algorithm(
-            game_copy, algorithm.max_depth, float("-inf"), float("inf"), True
+        _, move = minimax_algorithm(
+            game=game_copy,
+            depth=5,
+            alpha=Infinity.minus,
+            beta=Infinity.plus,
+            maximazing=True,
         )
 
         if move:
