@@ -27,9 +27,9 @@ class Player(Enum):
 
 
 class EnemyMode(Enum):
-    random = Mode(1, "1. Losowy")
-    suboptimal = Mode(2, "Suboptymalny")
-    minimax = Mode(3, "Mini-max")
+    random = "1"
+    suboptimal = "2"
+    minimax = "3"
 
 
 class Directions:
