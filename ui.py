@@ -1,5 +1,9 @@
 # ui.py | Author : Maciej Mucha
 
+# Realizacja prostego interfejsu graficznego,
+# odczyty i walidacja danych wejsciowych uzytkownika
+# raportowanie i wizualizacja stanu planszy
+
 import os
 from datetime import datetime
 from time import sleep

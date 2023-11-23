@@ -1,10 +1,11 @@
 # main.py | Author: Maciej Mucha
 
+# Realizacja sterowania nad symulacją
 import random
 
-from algoritm import minimax_algorithm
 from constants import EnemyMode, Infinity, Player, Vector2
 from game import Game
+from method import minimax_algorithm
 from ui import *
 
 

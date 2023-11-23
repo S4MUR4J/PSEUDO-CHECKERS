@@ -1,5 +1,9 @@
 # game.py | Author: Maciej Mucha
 
+# Reprazentacja problemu wykonana za pomocą klasy gry
+# odpowiadającą za przechowywanie informacji na temat rozgrywki
+# i wykonywanie operacji na niej
+
 # TODO refactor
 
 from copy import deepcopy

@@ -1,10 +1,9 @@
-# algorithm.py | Author: Maciej Mucha
+# method.py | Author: Maciej Mucha
+
+# Realizacja zadanej metody sztucznej inteligencji
 
 from constants import Infinity, Vector2
 from game import Game
-
-# TODO Zastanowić się nad przeniesieniem tutaj innych wyznaczen
-# w razie co tez zmienic to w raporcie
 
 
 def minimax_algorithm(

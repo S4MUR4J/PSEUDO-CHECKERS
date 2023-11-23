@@ -1,5 +1,7 @@
 # constants.py | Author: Maciej Mucha
 
+# Plik przechowujący klase pomocnicze
+
 from dataclasses import dataclass
 from enum import Enum
 
