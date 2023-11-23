@@ -5,17 +5,10 @@ import random
 from algoritm import minimax_algorithm
 from constants import EnemyMode, Infinity, Player, Vector2
 from game import Game
-from ui import (
-    end_simulation,
-    generate_raport,
-    get_float_input,
-    get_int_input,
-    get_int_to_mode_input,
-    get_yes_no_input,
-    visualization,
-)
+from ui import *
 
 
+# Funkcja zwracająca parametry symulacji na podstawie decyzji uzytkownika
 def __get_game_parameters() -> int | int | int | int | bool | float:
     minimax_depth = get_int_input("Prosze o podanie rozmiaru drzewa minimax: ")
     max_player_moves = get_int_input(
@@ -39,6 +32,7 @@ def __get_game_parameters() -> int | int | int | int | bool | float:
     )
 
 
+# Funkcja zwracająca najlepszy ruch wyznaczony przy uzyciu algorytmu minimax
 def __minimax_move(game: Game, depth: int) -> (Vector2, Vector2):
     game_copy = game.deep_copy()
     _, move = minimax_algorithm(
@@ -51,6 +45,8 @@ def __minimax_move(game: Game, depth: int) -> (Vector2, Vector2):
     return move
 
 
+# Funkcja znajdująca najlepszy ruch dla aktualnego stanu planszy,
+# Rozpatrując tylko ocenę dla jednego ruchu w przód
 def __suboptimal_move(game: Game) -> (Vector2, Vector2):
     best_move = None
     max_rating = Infinity.minus
@@ -67,6 +63,7 @@ def __suboptimal_move(game: Game) -> (Vector2, Vector2):
     return best_move
 
 
+# Funkcja zwracająca pseudolosowo wybrany ruch z mozliwych do wykonania
 def __random_move(game: Game) -> (Vector2, Vector2):
     moves = game.all_possible_moves()
 
@@ -75,6 +72,8 @@ def __random_move(game: Game) -> (Vector2, Vector2):
         return move
 
 
+# Funkcja dobierająca odpowiednia metode wyznaczenia ruchu na podstawie
+# tego, ktorego gracza jest tura i parametrów symulacji
 def __move_decider(game: Game, enemy_mode: EnemyMode, depth: int) -> (Vector2, Vector2):
     if game.curr_player == Player.White:
         return __minimax_move(game, depth)

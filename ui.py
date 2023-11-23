@@ -4,30 +4,46 @@ import os
 from datetime import datetime
 from time import sleep
 
-from constants import EnemyMode, Mode, Player
+from constants import EnemyMode, Player
 
 
+# Funkcja czyszcząca zawartość konsoli
 def __clear_screen() -> None:
-    os.system("cls")
+    os.system("clear")
 
 
+# Funkcja informująca o niepoprawnie wprowadzonej informacji
 def __wrong_input() -> None:
     input("Nieprawidłowy decyzja, naciśnij klawisz by powtórzyć...")
 
 
+# Funkcja drukująca ruch skąd dokąd został wykonany ruch w aktualnej turze
+# TODO Game class based
+def __write_move(move: str) -> None:
+    print(move)
+
+
+# Funkcja rysująca akualny stan planszy w konsoli
 def __draw_checkboard(board: list[list[Player]], board_size: int) -> None:
     for x in range(board_size):
         if x == 0:
             for i in range(board_size):
-                print(f" {chr(65 + i)}", end="")
+                print(
+                    f" {chr(65 + i)}", end=""
+                )  # Drukowanie nazwy konkretnej pozycji na osi X (A, B, C...)
             print("\n")
         for y in range(board_size):
-            print(f"|{board[board_size - x - 1][board_size - y - 1].value}", end="")
+            print(
+                f"|{board[board_size - x - 1][board_size - y - 1].value}", end=""
+            )  # Drukowanie zawartości konkretnej pozycji warcabnicy
             if y == board_size - 1:
-                print(f"|  {board_size - x}")
+                print(
+                    f"|  {board_size - x}"
+                )  # Drukowanie nazwy konkretnej pozycji na osi Y (1, 2, 3...)
     print("")
 
 
+# Funkcja czytająca i walidująca dane wejściowe typu int
 def get_int_input(message: str) -> int:
     while True:
         __clear_screen()
@@ -39,6 +55,7 @@ def get_int_input(message: str) -> int:
             return value
 
 
+# Funkcja czytająca i walidująca dane wejściowe typu float
 def get_float_input(message: str) -> float:
     while True:
         __clear_screen()
@@ -50,6 +67,7 @@ def get_float_input(message: str) -> float:
             return time
 
 
+# Funkcja czytająca i walidująca dane wejściowe wybóru TAK/NIE
 def get_yes_no_input(message: str) -> bool:
     choice = ""
     while True:
@@ -62,7 +80,8 @@ def get_yes_no_input(message: str) -> bool:
         __wrong_input()
 
 
-def get_int_to_mode_input() -> Mode:
+# Funkcja czytająca i walidująca dane wejściowe wybóru trybu gry przeciwnika
+def get_int_to_mode_input() -> EnemyMode:
     while True:
         __clear_screen()
         print("Tryby gry przeciwnika")
@@ -86,17 +105,16 @@ def get_int_to_mode_input() -> Mode:
             __wrong_input()
 
 
+# Funkcja zatrzymująca program na końcu symulacji,
+# zakończenie programu po wciśnięciu Enter
 def end_simulation() -> None:
     print("\n")
     input("Wciśnij Enter by zakończyć program...")
     __clear_screen()
 
 
-# TODO Game class based
-def __write_move(move: str) -> None:
-    print(move)
-
-
+# Funkcja odpowiadająca za wywołanie potrzebnych,
+# funkcji w celu wizualizacji aktualnej tury
 def visualization(
     board: list[list[Player]], board_size: int, sleep_time: float
 ) -> None:
@@ -105,6 +123,7 @@ def visualization(
     sleep(sleep_time)
 
 
+# Funkcja przygotowująca i zapisująca raport do pliku w folderze projektu
 # TODO Game class based
 def generate_raport(
     board_size: int,
@@ -113,8 +132,10 @@ def generate_raport(
     red_score: int,
     tour_count: int,
 ) -> None:
+    # Przygotowanie nazwy pliku na podstawie aktualnej daty i godziny
     file_name = f"MINI_MAX_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
 
+    # Przygotowanie danych i struktury raportu
     raport = [
         "Raport algorytmu mini-max w grze w warcaby: \n\n",
         f"Gra wykonana na warcabnicy: {board_size} x {board_size}. \n",
