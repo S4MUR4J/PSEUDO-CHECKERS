@@ -1,3 +1,5 @@
+# game.py | Author: Maciej Mucha
+
 from copy import deepcopy
 
 from constants import Directions, Player, Vector2
@@ -206,3 +208,6 @@ class Game:
             self.must_move_checker = None
             if not self.is_end_game:
                 self.__change_turn()
+
+
+# EOF

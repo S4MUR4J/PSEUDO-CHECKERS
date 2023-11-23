@@ -1,3 +1,5 @@
+# main.py | Author: Maciej Mucha
+
 import random
 
 from algoritm import minimax_algorithm
@@ -124,3 +126,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# EOF

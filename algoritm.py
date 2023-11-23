@@ -1,3 +1,5 @@
+# algorithm.py | Author: Maciej Mucha
+
 from constants import Infinity, Vector2
 from game import Game
 
@@ -74,3 +76,6 @@ def minimax_algorithm(
             min_rating,
             best_move,
         )  # Zwraca najmniejszą ocenę i najlepszy ruch przeciwnika
+
+
+# EOF

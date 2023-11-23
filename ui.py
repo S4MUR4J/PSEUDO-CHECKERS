@@ -1,3 +1,5 @@
+# ui.py | Author : Maciej Mucha
+
 import os
 from datetime import datetime
 from time import sleep
@@ -131,3 +133,6 @@ def generate_raport(
     file.close()
 
     print(f"W folderze projektu został wygenerowany raport: {file_name}... \n")
+
+
+# EOF
