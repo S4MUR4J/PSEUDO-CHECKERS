@@ -3,6 +3,9 @@
 from constants import Infinity, Vector2
 from game import Game
 
+# TODO Zastanowić się nad przeniesieniem tutaj innych wyznaczen
+# w razie co tez zmienic to w raporcie
+
 
 def minimax_algorithm(
     game: Game, depth: int, alpha: int, beta: int, maximazing: bool

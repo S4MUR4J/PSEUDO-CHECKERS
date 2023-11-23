@@ -87,6 +87,9 @@ def __move_decider(game: Game, enemy_mode: EnemyMode, depth: int) -> (Vector2, V
             return __minimax_move(game, depth)
 
 
+# TODO komentarze, refactor
+
+
 def main() -> None:
     (
         minimax_depth,

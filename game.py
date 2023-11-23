@@ -1,5 +1,7 @@
 # game.py | Author: Maciej Mucha
 
+# TODO refactor
+
 from copy import deepcopy
 
 from constants import Directions, Player, Vector2
