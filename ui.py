@@ -1,6 +1,6 @@
-# ui.py | Author : Maciej Mucha
+# Author : Maciej Mucha
 
-# Realizacja prostego interfejsu graficznego,
+# ui.py - Realizacja prostego interfejsu graficznego,
 # odczyty i walidacja danych wejsciowych uzytkownika
 # raportowanie i wizualizacja stanu planszy
 
@@ -18,11 +18,10 @@ def __clear_screen() -> None:
 
 # Funkcja informująca o niepoprawnie wprowadzonej informacji
 def __wrong_input() -> None:
-    input("Nieprawidłowy decyzja, naciśnij klawisz by powtórzyć...")
+    input("Nieprawidłowa decyzja, naciśnij klawisz by powtórzyć...")
 
 
 # Funkcja drukująca ruch skąd dokąd został wykonany ruch w aktualnej turze
-# TODO Game class based
 def __write_move(move: str) -> None:
     print(move)
 
@@ -57,18 +56,6 @@ def get_int_input(message: str) -> int:
             __wrong_input()
         else:
             return value
-
-
-# Funkcja czytająca i walidująca dane wejściowe typu float
-def get_float_input(message: str) -> float:
-    while True:
-        __clear_screen()
-        try:
-            time = float(input(message))
-        except ValueError:
-            __wrong_input()
-        else:
-            return time
 
 
 # Funkcja czytająca i walidująca dane wejściowe wybóru TAK/NIE
@@ -119,17 +106,17 @@ def end_simulation() -> None:
 
 # Funkcja odpowiadająca za wywołanie potrzebnych,
 # funkcji w celu wizualizacji aktualnej tury
-def visualization(
-    board: list[list[Player]], board_size: int, sleep_time: float
-) -> None:
+def visualization(board: list[list[Player]], board_size: int, move: str) -> None:
     __clear_screen()
     __draw_checkboard(board, board_size)
-    sleep(sleep_time)
+    __write_move(move)
+    sleep(0.25)
 
 
 # Funkcja przygotowująca i zapisująca raport do pliku w folderze projektu
-# TODO Game class based
-def generate_raport(board_size: int, white_score: int, red_score: int) -> None:
+def generate_raport(
+    board_size: int, white_score: int, red_score: int, move_history: list[str]
+) -> None:
     # Przygotowanie nazwy pliku na podstawie aktualnej daty i godziny
     file_name = f"MINI_MAX_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
 
@@ -137,19 +124,23 @@ def generate_raport(board_size: int, white_score: int, red_score: int) -> None:
     raport = [
         "Raport algorytmu mini-max w grze w warcaby: \n\n",
         f"Gra wykonana na warcabnicy: {board_size} x {board_size}. \n",
-        f'Rozgrywke wygral: {"Biały" if white_score > red_score else "Czerwony"}. \n',
-        f"Liczba punktow gracza bialego: {white_score} \n"
-        f"Liczba punktow gracza czerwonego: {red_score} \n"
-        # TODO Kolejność ruchów
-        # TODO dodatkowe
+        f'Rozgrywke wygral: {"Bialy" if white_score > red_score else "Czerwony"}. \n',
+        f"Liczba punktow gracza bialego: {white_score} \n",
+        f"Liczba punktow gracza czerwonego: {red_score} \n",
+        f"\nHistoria ruchow: \n",
     ]
 
+    for move in move_history:
+        raport.append(move)
+
+    # Zapis do pliku
     file = open(file_name, "w")
 
     for data in raport:
         file.writelines(data)
     file.close()
 
+    # Powiadomienie o wygenerowanym pliku
     print(f"W folderze projektu został wygenerowany raport: {file_name}... \n")
 
 

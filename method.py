@@ -1,6 +1,9 @@
-# method.py | Author: Maciej Mucha
+# Author: Maciej Mucha
 
-# Realizacja zadanej metody sztucznej inteligencji
+# method.py Realizacja zadanej metody sztucznej inteligencji mini-max
+# oraz funkcji znajdowania suboptymalnego i losowego ruchu
+
+import random
 
 from constants import Infinity, Player, Vector2
 from game import Game
@@ -78,6 +81,32 @@ def minimax_algorithm(
             min_rating,
             best_move,
         )  # Zwraca najmniejszą ocenę i najlepszy ruch przeciwnika
+
+
+# Funkcja znajdująca najlepszy ruch dla aktualnego stanu planszy,
+# Rozpatrując tylko ocenę dla jednego ruchu w przód
+def suboptimal_move(game: Game) -> (Vector2, Vector2):
+    best_move = None
+    max_rating = Infinity.minus
+
+    for move in game.all_possible_moves():
+        game_inner = game
+        game_inner.play_turn(move[1], move[0])
+        curr_rating = game_inner.get_player_rating()
+        if curr_rating > max_rating:
+            max_rating = curr_rating
+            best_move = move
+
+    return best_move
+
+
+# Funkcja zwracająca pseudolosowo wybrany ruch z mozliwych do wykonania
+def random_move(game: Game) -> (Vector2, Vector2):
+    moves = game.all_possible_moves()
+
+    if moves:
+        move = random.choice(moves)
+        return move
 
 
 # EOF

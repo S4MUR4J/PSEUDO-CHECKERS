@@ -1,6 +1,6 @@
-# game.py | Author: Maciej Mucha
+# Author: Maciej Mucha
 
-# Reprazentacja problemu wykonana za pomocą klasy gry
+# game.py Reprazentacja problemu wykonana za pomocą klasy gry
 # odpowiadającą za przechowywanie informacji na temat rozgrywki
 # i wykonywanie operacji na niej
 
@@ -21,7 +21,7 @@ class Game:
     tour_count: int = None
     must_move_checker: Vector2 = None
     move_counter: int = None
-    move_history: list[str] = []
+    move_history: list[str] = [""]
 
     white_score: int = None
     red_score: int = None
@@ -106,7 +106,7 @@ class Game:
         self.board[old_pos.x][old_pos.y] = Player.Empty
         self.board[new_pos.x][new_pos.y] = self.curr_player
         self.move_history.append(
-            f"{chr(65 + old_pos.x)}{old_pos.y + 1} -> {chr(65 + new_pos.x)}{new_pos.y + 1} \n"
+            f"{self.curr_player.name}: {chr(65 + self.board_size - old_pos.y - 1)}{old_pos.x + 1} -> {chr(65 + self.board_size - new_pos.y - 1)}{new_pos.x + 1} \n"
         )
 
         if self.__is_king_transform(new_pos):
