@@ -101,7 +101,7 @@ def main() -> None:
         sleep_time,
     ) = __get_game_parameters()
 
-    game = Game(board_size)
+    game = Game(board_size, max_player_moves)
 
     while True:
         if with_visual:
@@ -109,13 +109,7 @@ def main() -> None:
                 board=game.board, board_size=game.board_size, sleep_time=sleep_time
             )
         if game.is_end_game:
-            generate_raport(
-                board_size,
-                game.who_won,
-                game.white_score,
-                game.red_score,
-                game.tour_count,
-            )
+            generate_raport(board_size, game.who_won, game.white_score, game.red_score)
             break
 
         move = __move_decider(game, enemy_mode, minimax_depth)

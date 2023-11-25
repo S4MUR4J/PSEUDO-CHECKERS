@@ -13,7 +13,7 @@ from constants import EnemyMode, Player
 
 # Funkcja czyszcząca zawartość konsoli
 def __clear_screen() -> None:
-    os.system("clear")
+    os.system("cls")
 
 
 # Funkcja informująca o niepoprawnie wprowadzonej informacji
@@ -130,11 +130,7 @@ def visualization(
 # Funkcja przygotowująca i zapisująca raport do pliku w folderze projektu
 # TODO Game class based
 def generate_raport(
-    board_size: int,
-    who_won: Player,
-    white_score: int,
-    red_score: int,
-    tour_count: int,
+    board_size: int, who_won: Player, white_score: int, red_score: int
 ) -> None:
     # Przygotowanie nazwy pliku na podstawie aktualnej daty i godziny
     file_name = f"MINI_MAX_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
@@ -146,7 +142,6 @@ def generate_raport(
         f'Rozgrywke wygral: {"Biały" if who_won == Player.White else "Czerwony"}. \n',
         f"Liczba punktow gracza bialego: {white_score} \n"
         f"Liczba punktow gracza czerwonego: {red_score} \n"
-        f"Gra trwala {tour_count} tur. \n"
         # TODO Kolejność ruchów
         # TODO dodatkowe
     ]

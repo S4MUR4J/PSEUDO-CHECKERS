@@ -27,6 +27,12 @@ class Player(Enum):
     Empty = " "
 
 
+# Enum przechowujący punktacje za ruchy
+class Points(Enum):
+    Capture = 1
+    King = 3
+
+
 # Enum reprezentujący rodzaje trybów podejmowania decyzji przeciwnika
 class EnemyMode(Enum):
     random = "1"
