@@ -41,7 +41,7 @@ def __minimax_move(game: Game, depth: int) -> (Vector2, Vector2):
         depth=depth,
         alpha=Infinity.minus,
         beta=Infinity.plus,
-        maximazing=True,
+        max_player=game.curr_player,
     )
     return move
 
@@ -56,7 +56,7 @@ def __suboptimal_move(game: Game) -> (Vector2, Vector2):
     for move in game.all_possible_moves():
         game_inner = game_copy
         game_inner.play_turn(move[1], move[0])
-        curr_rating = game_inner.get_rating()
+        curr_rating = game_inner.get_player_rating()
         if curr_rating > max_rating:
             max_rating = curr_rating
             best_move = move
@@ -88,9 +88,6 @@ def __move_decider(game: Game, enemy_mode: EnemyMode, depth: int) -> (Vector2, V
             return __minimax_move(game, depth)
 
 
-# TODO komentarze, refactor
-
-
 def main() -> None:
     (
         minimax_depth,
@@ -99,25 +96,28 @@ def main() -> None:
         enemy_mode,
         with_visual,
         sleep_time,
-    ) = __get_game_parameters()
+    ) = __get_game_parameters()  # Wczytanie potrzebnych parametrów
 
-    game = Game(board_size, max_player_moves)
+    game = Game(board_size, max_player_moves)  # Stworzenie instancji gry
 
+    # Pętla symulacji kończy się wraz z zakończeniem gry
     while True:
+        # Wykonanie wizualizacji zgodnie z parametrem
         if with_visual:
             visualization(
-                board=game.board, board_size=game.board_size, sleep_time=sleep_time
+                board=game.board, board_size=board_size, sleep_time=sleep_time
             )
+        # Na koniec gry generowany jest raport
         if game.is_end_game:
-            generate_raport(board_size, game.who_won, game.white_score, game.red_score)
+            generate_raport(board_size, game.white_score, game.red_score)
             break
 
+        # Ruch wybierany na podstawie parametrów i aktualnego gracza
         move = __move_decider(game, enemy_mode, minimax_depth)
         if move:
             game.play_turn(move[1], move[0])
-        else:
-            break
 
+    # Komunikat o końcu programu
     end_simulation()
 
 

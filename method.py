@@ -2,28 +2,28 @@
 
 # Realizacja zadanej metody sztucznej inteligencji
 
-from constants import Infinity, Vector2
+from constants import Infinity, Player, Vector2
 from game import Game
 
 
 def minimax_algorithm(
-    game: Game, depth: int, alpha: int, beta: int, maximazing: bool
+    game: Game, depth: int, alpha: int, beta: int, max_player: Player
 ) -> int | Vector2:
     best_move = None
 
     # Sprawdzenie czy jesteśmy na ostatnim poziomie drzewa mini-maks
     if depth == 0 or game.is_end_game:
         return (
-            game.get_rating(),
+            game.get_player_rating(max_player),
             best_move,
-        )  # Ocena stanu gry na końcu drzewa, bez najlepszego ruchu
+        )  # Ocena stanu gry dla gracza maksymalizującego, bez najlepszego ruchu
 
     # Kopia stanu gry przed sprawdzaniem
     # będzie przypisywana do game_inner w celu oszczędzenia zasobów
     game_copy = game.deep_copy()
 
     # Sprawdzanie na gracza maksymalizującego
-    if maximazing:
+    if game.curr_player == Player:
         max_rating = (
             Infinity.minus
         )  # Dla początku rozpatrywania drzewa nieosiągalna wartość
@@ -37,7 +37,7 @@ def minimax_algorithm(
                 depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
-                maximazing=False,
+                max_player=False,
             )  # Rozpatrzenie stanu gry po wykonanym ruchu
             # Czy jest to do tej pory najlepszy stan gry dla gracza
             if rating > max_rating:
@@ -64,7 +64,7 @@ def minimax_algorithm(
                 depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
-                maximazing=True,
+                max_player=True,
             )  # Rozpatrzenie stanu gry po wykonanym ruchu
             # Czy jest to do tej pory stan gry dla przeciwnika
             if rating < min_rating:

@@ -129,9 +129,7 @@ def visualization(
 
 # Funkcja przygotowująca i zapisująca raport do pliku w folderze projektu
 # TODO Game class based
-def generate_raport(
-    board_size: int, who_won: Player, white_score: int, red_score: int
-) -> None:
+def generate_raport(board_size: int, white_score: int, red_score: int) -> None:
     # Przygotowanie nazwy pliku na podstawie aktualnej daty i godziny
     file_name = f"MINI_MAX_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
 
@@ -139,7 +137,7 @@ def generate_raport(
     raport = [
         "Raport algorytmu mini-max w grze w warcaby: \n\n",
         f"Gra wykonana na warcabnicy: {board_size} x {board_size}. \n",
-        f'Rozgrywke wygral: {"Biały" if who_won == Player.White else "Czerwony"}. \n',
+        f'Rozgrywke wygral: {"Biały" if white_score > red_score else "Czerwony"}. \n',
         f"Liczba punktow gracza bialego: {white_score} \n"
         f"Liczba punktow gracza czerwonego: {red_score} \n"
         # TODO Kolejność ruchów

@@ -17,7 +17,6 @@ class Game:
     # Dane niezależne od parametrów
     board: list[list[Player]] = None
     curr_player: Player = None
-    who_won: Player = None
     is_end_game: bool = None
     tour_count: int = None
     must_move_checker: Vector2 = None
@@ -34,7 +33,6 @@ class Game:
         self.move_counter = 0
         self.__fill_board()
         self.curr_player = Player.White
-        self.who_won = Player.Empty
         self.is_end_game = False
         self.white_score = 0
         self.red_score = 0
@@ -104,14 +102,15 @@ class Game:
     def __move_checker(self, old_pos: Vector2, new_pos: Vector2) -> None:
         if self.__is_capture_move(old_pos, new_pos):
             self.__capture_checker(old_pos, new_pos)
-        if self.__is_king_transform(new_pos):
-            self.__transform_king(new_pos)
 
         self.board[old_pos.x][old_pos.y] = Player.Empty
         self.board[new_pos.x][new_pos.y] = self.curr_player
         self.move_history.append(
             f"{chr(65 + old_pos.x)}{old_pos.y + 1} -> {chr(65 + new_pos.x)}{new_pos.y + 1} \n"
         )
+
+        if self.__is_king_transform(new_pos):
+            self.__transform_king(new_pos)
 
     # Funkcja zmieniająca turę, i zwiększająca ilość wykonanych ruchów
     def __change_turn(self) -> None:
@@ -155,38 +154,8 @@ class Game:
                         return True
         return False
 
-    def __possible_moves(
-        self, pos: Vector2, must_capture: bool = False
-    ) -> list[Vector2]:
-        possible_moves = []
-        directions = Directions().get()
-
-        if self.board[pos.x][pos.y] == self.curr_player:
-            for dir in directions:
-                new_pos = Vector2(pos.x + dir.x, pos.y + dir.y)
-                if self.__validate_indexes(new_pos):
-                    if (
-                        self.board[new_pos.x][new_pos.y] == Player.Empty
-                        and (
-                            (self.curr_player == Player.White and dir.x > 0)
-                            or (self.curr_player == Player.Red and dir.x < 0)
-                        )
-                        and not must_capture
-                    ):
-                        possible_moves.append(new_pos)
-                    elif self.board[new_pos.x][new_pos.y] == (
-                        Player.Red if self.curr_player == Player.White else Player.White
-                    ):
-                        capt_pos = Vector2(new_pos.x + dir.x, new_pos.y + dir.y)
-                        if (
-                            self.__validate_indexes(capt_pos)
-                            and self.board[capt_pos.x][capt_pos.y] == Player.Empty
-                        ):
-                            possible_moves.append(capt_pos)
-
-        return possible_moves
-
-    def __update_game_end(self) -> None:
+    # Funkcja sprawdzająca czy istnieją jeszcze warcaby obydwu graczy jeśli nie, koniec rozgrywki
+    def __are_checkers_on_board(self) -> None:
         any_white_checker = False
         any_red_checker = False
 
@@ -200,16 +169,51 @@ class Game:
                 if any_white_checker and any_red_checker:
                     return
 
-        self.who_won = Player.White if any_white_checker == True else Player.Red
         self.is_end_game = True
 
+    # Funkcja zwracająca możliwe ruchy podanego warcaba bierze również
+    def __possible_moves(
+        self, pos: Vector2, must_capture: bool = False
+    ) -> list[Vector2]:
+        possible_moves = []
+        directions = Directions().get()
+
+        if self.board[pos.x][pos.y] == self.curr_player:
+            for dir in directions:
+                new_pos = Vector2(pos.x + dir.x, pos.y + dir.y)
+                if self.__validate_indexes(new_pos):
+                    if (
+                        self.board[new_pos.x][new_pos.y]
+                        == Player.Empty  # Pozycja jest pusta
+                        and (
+                            (self.curr_player == Player.White and dir.x > 0)
+                            or (self.curr_player == Player.Red and dir.x < 0)
+                        )  # Gracz idzie do "przodu"
+                        and not must_capture  # Jeśli nie ma wymuszania ruchu
+                    ):
+                        possible_moves.append(new_pos)
+                    elif self.board[new_pos.x][new_pos.y] == (
+                        Player.Red if self.curr_player == Player.White else Player.White
+                    ):  # Jeśli wymuszane bicie
+                        capt_pos = Vector2(new_pos.x + dir.x, new_pos.y + dir.y)
+                        if (
+                            self.__validate_indexes(capt_pos)
+                            and self.board[capt_pos.x][capt_pos.y] == Player.Empty
+                        ):  # Jeśli pozycja znajduje się na warcabnicy i możliwy ruch
+                            possible_moves.append(capt_pos)
+
+        return possible_moves
+
+    # Funkcja zwraca wszystkie możliwe do wykonania ruchy przez aktualnego gracza
     def all_possible_moves(self) -> list[(Vector2, Vector2)]:
         all_possible_moves = []
         must_capture = self.__capture_duty()
 
+        # Wykorzystywane w przypadkach gdy mamy kilkukrotne przejęcia sprawdzany tylko konkretny
         if self.must_move_checker is not None:
             for move in self.__possible_moves(self.must_move_checker, must_capture):
                 all_possible_moves.append((move, self.must_move_checker))
+        # Znajdowanie ruchów każdego warcaba aktualnego gracza pośrednio przez funkcje __possible_moves
         else:
             for x in range(self.board_size):
                 for y in range(self.board_size):
@@ -217,32 +221,34 @@ class Game:
                         for move in self.__possible_moves(Vector2(x, y), must_capture):
                             all_possible_moves.append((move, Vector2(x, y)))
 
+        # Jeśli brak ruchów gracza to koniec gry dla kilkukrotnych przejęć nie wołamy funkcji
+        # ten warunek sprawdzany tylko dla "pierwszego ruchu gracza"
         if len(all_possible_moves) == 0:
             self.is_end_game = True
-            self.who_won = (
-                Player.White if self.curr_player == Player.Red else Player.Red
-            )
 
         return all_possible_moves
 
+    # Funkcja wywołująca szeregu akcji związanych z rozegraniem tury
     def play_turn(self, old_pos: Vector2, new_pos: Vector2) -> None:
-        self.__move_checker(old_pos, new_pos)
-        self.__update_game_end()
+        self.__move_checker(old_pos, new_pos)  # Wykonanie ruchu
+        self.__are_checkers_on_board()  # Sprawdzenie czy istnieją warcaby gracza
 
         if self.is_end_game:
             return
 
+        # Jeśli wykonane przejęcie i następne możliwe
         if abs(old_pos.x - new_pos.x) > 1 and self.__is_next_capture_possible(new_pos):
             self.must_move_checker = new_pos
         else:
             self.must_move_checker = None
             self.__change_turn()
 
-    def get_rating(self) -> int:
-        if self.curr_player == Player.White:
-            return self.white_score - self.red_score
+    # Funkcja zwraca ocenę stanu planszy na konkretnego gracza
+    def get_player_rating(self, player: Player) -> int:
+        if player == Player.White:
+            return self.white_score  # - self.red_score
         else:
-            return self.red_score - self.white_score
+            return self.red_score  # - self.white_score
 
 
 # EOF
