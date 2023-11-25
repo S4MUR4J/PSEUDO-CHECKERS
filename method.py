@@ -1,6 +1,6 @@
 # Author: Maciej Mucha
 
-# method.py Realizacja zadanej metody sztucznej inteligencji mini-max
+# method.py - Realizacja zadanej metody sztucznej inteligencji mini-max
 # oraz funkcji znajdowania suboptymalnego i losowego ruchu
 
 import random
@@ -16,14 +16,11 @@ def minimax_algorithm(
 
     # Sprawdzenie czy jesteśmy na ostatnim poziomie drzewa mini-maks
     if depth == 0 or game.is_end_game:
+        print(depth)
         return (
             game.get_player_rating(max_player),
             best_move,
         )  # Ocena stanu gry dla gracza maksymalizującego, bez najlepszego ruchu
-
-    # Kopia stanu gry przed sprawdzaniem
-    # będzie przypisywana do game_inner w celu oszczędzenia zasobów
-    game_copy = game.deep_copy()
 
     # Sprawdzanie na gracza maksymalizującego
     if game.curr_player == Player:
@@ -33,10 +30,10 @@ def minimax_algorithm(
 
         # Rozpatrywanie każdego możliwego ruchu z danego stanu gry
         for move in game.all_possible_moves():
-            game_inner = game_copy
-            game_inner.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
+            game_copy = game.deep_copy()
+            game_copy.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
             rating, _ = minimax_algorithm(
-                game=game_inner,
+                game=game_copy,
                 depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
@@ -60,10 +57,10 @@ def minimax_algorithm(
 
         # Rozpatrywanie każdego możliwego ruchu z danego stanu gry
         for move in game.all_possible_moves():
-            game_inner = game_copy
-            game_inner.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
+            game_copy = game.deep_copy()
+            game_copy.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
             rating, _ = minimax_algorithm(
-                game=game_inner,
+                game=game_copy,
                 depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
@@ -92,7 +89,7 @@ def suboptimal_move(game: Game) -> (Vector2, Vector2):
     for move in game.all_possible_moves():
         game_inner = game
         game_inner.play_turn(move[1], move[0])
-        curr_rating = game_inner.get_player_rating()
+        curr_rating = game_inner.get_player_rating(Player.Red)
         if curr_rating > max_rating:
             max_rating = curr_rating
             best_move = move

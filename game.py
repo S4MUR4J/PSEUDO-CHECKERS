@@ -20,7 +20,6 @@ class Game:
     is_end_game: bool = None
     tour_count: int = None
     must_move_checker: Vector2 = None
-    move_counter: int = None
     move_history: list[str] = [""]
 
     white_score: int = None
@@ -36,7 +35,7 @@ class Game:
         self.is_end_game = False
         self.white_score = 0
         self.red_score = 0
-        self.tour_count = 0
+        self.tour_count = 1
         self.list_string = []
 
     # Funkcja tworząca warcabnice i uzupełniająca ją warcabami
@@ -114,7 +113,7 @@ class Game:
 
     # Funkcja zmieniająca turę, i zwiększająca ilość wykonanych ruchów
     def __change_turn(self) -> None:
-        self.move_counter += 1
+        self.tour_count += 1
         self.curr_player = (
             Player.Red if self.curr_player == Player.White else Player.White
         )
@@ -209,17 +208,20 @@ class Game:
         all_possible_moves = []
         must_capture = self.__capture_duty()
 
-        # Wykorzystywane w przypadkach gdy mamy kilkukrotne przejęcia sprawdzany tylko konkretny
-        if self.must_move_checker is not None:
-            for move in self.__possible_moves(self.must_move_checker, must_capture):
-                all_possible_moves.append((move, self.must_move_checker))
-        # Znajdowanie ruchów każdego warcaba aktualnego gracza pośrednio przez funkcje __possible_moves
-        else:
-            for x in range(self.board_size):
-                for y in range(self.board_size):
-                    if self.board[x][y] == self.curr_player:
-                        for move in self.__possible_moves(Vector2(x, y), must_capture):
-                            all_possible_moves.append((move, Vector2(x, y)))
+        if not self.is_end_game:
+            # Wykorzystywane w przypadkach gdy mamy kilkukrotne przejęcia sprawdzany tylko konkretny
+            if self.must_move_checker is not None:
+                for move in self.__possible_moves(self.must_move_checker, must_capture):
+                    all_possible_moves.append((move, self.must_move_checker))
+            # Znajdowanie ruchów każdego warcaba aktualnego gracza pośrednio przez funkcje __possible_moves
+            else:
+                for x in range(self.board_size):
+                    for y in range(self.board_size):
+                        if self.board[x][y] == self.curr_player:
+                            for move in self.__possible_moves(
+                                Vector2(x, y), must_capture
+                            ):
+                                all_possible_moves.append((move, Vector2(x, y)))
 
         # Jeśli brak ruchów gracza to koniec gry dla kilkukrotnych przejęć nie wołamy funkcji
         # ten warunek sprawdzany tylko dla "pierwszego ruchu gracza"
