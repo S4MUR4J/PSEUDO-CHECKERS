@@ -151,7 +151,7 @@ def suboptimal_move(game: Game) -> (Vector2, Vector2):
     for move in game.all_possible_moves():
         game_copy = game.deep_copy()
         game_copy.play_turn(move[1], move[0])
-        curr_rating = game_copy.get_player_rating(Player.Red)
+        curr_rating = game_copy.get_player_rating(game.curr_player)
         if curr_rating > max_rating:
             max_rating = curr_rating
             best_move = move

@@ -41,9 +41,12 @@ class Game:
         self.board = []
 
         # Logika dostosowująca pusty środek warcabnicy w zależności od rozmiaru
-        middle = round(self.board_size / 2)
-        empty_rows = [middle, middle - 1]
-        if self.board_size % 2 != 0:
+        middle = self.board_size // 2
+        if self.board_size == 3:
+            empty_rows = [1]
+        else:
+            empty_rows = [middle, middle - 1]
+        if self.board_size != 3 and self.board_size % 2 != 0:
             empty_rows.append(middle + 1)
 
         # Wstawianie warcab na odpowiednie pozycje
@@ -90,21 +93,24 @@ class Game:
             self.curr_player == Player.Red and pos.x == 0
         )
 
-    # Funkcja znikająca i punktująca przemianę w damkę
+    # Funkcja punktująca przemianę w damkę i usuwająca ten warcab z gry
     def __transform_king(self, pos: Vector2) -> None:
         self.board[pos.x][pos.y] = Player.Empty
         self.__score_player(Points.King)
 
     # Funkcja przenosząca warcab z starej pozycji na nową
-    def __move_checker(self, old_pos: Vector2, new_pos: Vector2) -> None:
+    def __move_checker(
+        self, old_pos: Vector2, new_pos: Vector2, real_move: bool
+    ) -> None:
         if self.__is_capture_move(old_pos, new_pos):
             self.__capture_checker(old_pos, new_pos)
 
         self.board[old_pos.x][old_pos.y] = Player.Empty
         self.board[new_pos.x][new_pos.y] = self.curr_player
-        self.move_history.append(
-            f"{self.curr_player.name}: {chr(65 + self.board_size - old_pos.y - 1)}{old_pos.x + 1} -> {chr(65 + self.board_size - new_pos.y - 1)}{new_pos.x + 1} \n"
-        )
+        if real_move:
+            self.move_history.append(
+                f"{self.curr_player.name}: {chr(65 + self.board_size - old_pos.y - 1)}{old_pos.x + 1} -> {chr(65 + self.board_size - new_pos.y - 1)}{new_pos.x + 1} \n"
+            )
 
         if self.__is_king_transform(new_pos):
             self.__transform_king(new_pos)
@@ -152,7 +158,7 @@ class Game:
                         return True
         return False
 
-    # Funkcja sprawdzająca czy istnieją jeszcze warcaby obydwu graczy jeśli nie, koniec rozgrywki
+    # Funkcja kończąca grę gdy obydwu graczy nie ma przynajmniej po jednym warcabie
     def __are_checkers_on_board(self) -> None:
         any_white_checker = False
         any_red_checker = False
@@ -168,13 +174,6 @@ class Game:
                     return
 
         self.is_end_game = True
-
-    def __enemy_player_no_moves(self):
-        game_copy = self.deep_copy()
-        game_copy.__change_turn()
-
-        if len(game_copy.all_possible_moves()) == 0:
-            self.is_end_game = True
 
     # Funkcja zwracająca możliwe ruchy podanego warcaba bierze również
     def __possible_moves(
@@ -234,8 +233,10 @@ class Game:
         return all_possible_moves
 
     # Funkcja wywołująca szeregu akcji związanych z rozegraniem tury
-    def play_turn(self, old_pos: Vector2, new_pos: Vector2) -> None:
-        self.__move_checker(old_pos, new_pos)  # Wykonanie ruchu
+    def play_turn(
+        self, old_pos: Vector2, new_pos: Vector2, real_move: bool = False
+    ) -> None:
+        self.__move_checker(old_pos, new_pos, real_move)  # Wykonanie ruchu
         self.__are_checkers_on_board()  # Sprawdzenie czy istnieją warcaby gracza
 
         if self.is_end_game:
@@ -247,7 +248,6 @@ class Game:
         else:
             self.must_move_checker = None
             self.__change_turn()
-            self.__enemy_player_no_moves()
 
     # Funkcja zwraca ocenę stanu planszy na konkretnego gracza
     def get_player_rating(self, player: Player) -> int:

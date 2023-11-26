@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 from time import sleep
 
-from constants import EnemyMode, Infinity, Player, Vector2, sleep_time
+from constants import *
 from game import Game
 from input import *
 from method import *
@@ -63,9 +63,9 @@ def __print_save_raport(
         f"Raport badania rozmiaru drzewa mini-max w grze w warcaby: \n\n",
         f"Srednia rozpietosc drzewa: {round(sum(tst.tree_range) / len(tst.tree_range), 2)}\n"
         f"Najglebiej polozony wezel: {tst.max_depth} \n"
-        f"Oszacowany rozmiar drzewa mini-maks na podstawie limitu {tst.call_limit} wywolan: {tst.tree_size}\n"
+        f"Oszacowany rozmiar drzewa mini-maks na podstawie limitu {tst.call_limit} wywolan rekursji: {tst.tree_size}\n"
         f"-------------------------------------------------------------\n"
-        f"Raport algorytmu mini-max w grze w warcaby dla głębokości: {depth}: \n\n",
+        f"Raport algorytmu mini-max w grze w warcaby dla glebokosci: {depth}: \n\n",
         f"Gra wykonana na warcabnicy: {board_size} x {board_size}. \n",
         f'Rozgrywke wygral: {"Bialy" if white_score > red_score else "Czerwony"}. \n',
         f"Gracz Bialy wykonal ruchow: {math.ceil(tour_count / 2)}\n",
@@ -125,12 +125,14 @@ def __estimate_tree_size(game: Game, tst: Tree_size_test) -> None:
         tst=tst,
     )
     tst.tree_size = int(
-        (sum(tst.tree_range) / len(tst.tree_range)) ** (tst.max_depth / 2)
+        math.ceil(sum(tst.tree_range) / len(tst.tree_range)) ** (tst.max_depth / 2)
     )  # Na podstawie wzoru b^(d/2) dla najlepszego przeszukiwania
     tst.tree_size_no_prune = int(
         (sum(tst.tree_range) / len(tst.tree_range)) ** (tst.max_depth)
     )
-    os.system("cls")
+    input(
+        f"Maksymalna głębokość drzewa dla tej planszy to {tst.max_depth}, wciśnij Enter by kontynuować."
+    )
 
 
 # Funkcja odpowiadająca za wywołanie potrzebnych,
@@ -143,14 +145,17 @@ def __visualization(board: list[list[Player]], board_size: int, move: str) -> No
 
 
 # Funkcja zwracająca parametry symulacji na podstawie decyzji uzytkownika
-def __get_game_parameters() -> int | int | int | bool:
-    checkboard_size = get_int_input("Prosze o podanie rozmiaru szachownicy: ")
+def __get_game_parameters() -> int | int | int | bool | Tree_size_test:
+    checkboard_size = get_int_input("Prosze o podanie rozmiaru szachownicy: ", 3)
+    # Oszaczowanie rozmaru drzewa przy maksymalnym milionie wywołań rekursji
+    tst = Tree_size_test()
+    __estimate_tree_size(Game(checkboard_size), tst)
     tree_depth = get_int_input(
-        "Prosze o podanie maksymalnej glebokosci drzewa mini-max: "
+        "Prosze o podanie maksymalnej glebokosci drzewa mini-max: ", 1
     )
     enemy_mode = get_int_to_mode_input()
     with_visual = get_yes_no_input("Czy wykonać program z wizualizacją [T/N]: ")
-    return checkboard_size, tree_depth, enemy_mode, with_visual
+    return checkboard_size, tree_depth, enemy_mode, with_visual, tst
 
 
 # Funkcja zwracająca najlepszy ruch wyznaczony przy uzyciu algorytmu minimax
@@ -181,19 +186,16 @@ def __move_decider(game: Game, enemy_mode: EnemyMode, tree_depth) -> (Vector2, V
 
 
 def main() -> None:
-    sys.setrecursionlimit(100000)
+    sys.setrecursionlimit(recursion_limit)
     (
         board_size,
         tree_depth,
         enemy_mode,
         with_visual,
+        tst,
     ) = __get_game_parameters()  # Wczytanie potrzebnych parametrów
 
     game = Game(board_size)  # Stworzenie instancji gry
-
-    # Oszaczowanie rozmaru drzewa przy maksymalnym milionie wywołań rekursji
-    tst = Tree_size_test()
-    __estimate_tree_size(game, tst)
 
     # Pętla symulacji kończy się wraz z zakończeniem gry
     while True:
@@ -207,8 +209,8 @@ def main() -> None:
             break
 
         # Ruch wybierany na podstawie parametrów i aktualnego gracza
-        move = __move_decider(game, enemy_mode, tree_depth)
-        game.play_turn(move[1], move[0])
+        move = __move_decider(game.deep_copy(), enemy_mode, tree_depth)
+        game.play_turn(move[1], move[0], True)
 
     # Zakończenie programu poprzez generowanie raportu oraz informacje
     __end_simulation(game, tst, tree_depth)

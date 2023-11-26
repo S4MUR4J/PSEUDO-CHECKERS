@@ -13,7 +13,7 @@ def __wrong_input() -> None:
 
 
 # Funkcja czytająca i walidująca dane wejściowe typu int
-def get_int_input(message: str) -> int:
+def get_int_input(message: str, min: int) -> int:
     while True:
         os.system("cls")
         try:
@@ -21,7 +21,10 @@ def get_int_input(message: str) -> int:
         except ValueError:
             __wrong_input()
         else:
-            return value
+            if value >= min:
+                return value
+            print(f"Zbyt mała wartość, wartość minimalna: {min}")
+            __wrong_input()
 
 
 # Funkcja czytająca i walidująca dane wejściowe wybóru TAK/NIE

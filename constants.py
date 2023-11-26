@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from enum import Enum
 
 # Czas zatrzymania programu po wizualizacji
-sleep_time: int = 0.1
+sleep_time: int = 1
+recursion_limit = 100000
 
 
 # Klasa przechowująca pozycję na planszy X | Y
