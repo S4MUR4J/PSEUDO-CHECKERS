@@ -70,7 +70,7 @@ def visualization(board: list[list[Player]], board_size: int, move: str) -> None
     os.system("cls")
     __draw_checkboard(board, board_size)
     print(move)
-    sleep(1)
+    sleep(0.1)
 
 
 # Funkcja przygotowująca i zapisująca raport do pliku w folderze projektu
@@ -127,10 +127,8 @@ def __get_game_parameters() -> int | int | int | int | bool | float:
 
 # Funkcja zwracająca najlepszy ruch wyznaczony przy uzyciu algorytmu minimax
 def __minimax_move(game: Game) -> (Vector2, Vector2):
-    game_copy = game.deep_copy()
     _, move = minimax_algorithm(
-        game=game_copy,
-        depth=100000,
+        game=game,
         alpha=Infinity.minus,
         beta=Infinity.plus,
         max_player=game.curr_player,
@@ -154,7 +152,7 @@ def __move_decider(game: Game, enemy_mode: EnemyMode) -> (Vector2, Vector2):
 
 
 def main() -> None:
-    sys.setrecursionlimit(1000000)
+    sys.setrecursionlimit(100000)
     (
         board_size,
         enemy_mode,

@@ -9,21 +9,25 @@ from constants import Infinity, Player, Vector2
 from game import Game
 
 
-def minimax_algorithm(
-    game: Game, depth: int, alpha: int, beta: int, max_player: Player
-) -> int | Vector2:
-    best_move = None
+def get_current_search_player(max_player: bool) -> Player:
+    Player.Red if max_player == Player.White else Player.White
 
-    # Sprawdzenie czy jesteśmy na ostatnim poziomie drzewa mini-maks
-    if depth == 0 or game.is_end_game:
-        print(depth)
+
+def minimax_algorithm(
+    game: Game, alpha: int, beta: int, max_player: bool, curr_depth: int = 1
+) -> int | Vector2:
+    # Sprawdzenie czy gra została skończona
+    if game.is_end_game:
+        # print(curr_depth)
         return (
-            game.get_player_rating(max_player),
-            best_move,
+            game.get_player_rating(game.curr_player),
+            None,
         )  # Ocena stanu gry dla gracza maksymalizującego, bez najlepszego ruchu
 
+    best_move = None
+
     # Sprawdzanie na gracza maksymalizującego
-    if game.curr_player == Player:
+    if max_player:
         max_rating = (
             Infinity.minus
         )  # Dla początku rozpatrywania drzewa nieosiągalna wartość
@@ -34,10 +38,10 @@ def minimax_algorithm(
             game_copy.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
             rating, _ = minimax_algorithm(
                 game=game_copy,
-                depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
                 max_player=False,
+                curr_depth=curr_depth + 1,
             )  # Rozpatrzenie stanu gry po wykonanym ruchu
             # Czy jest to do tej pory najlepszy stan gry dla gracza
             if rating > max_rating:
@@ -61,10 +65,10 @@ def minimax_algorithm(
             game_copy.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
             rating, _ = minimax_algorithm(
                 game=game_copy,
-                depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
                 max_player=True,
+                curr_depth=curr_depth + 1,
             )  # Rozpatrzenie stanu gry po wykonanym ruchu
             # Czy jest to do tej pory stan gry dla przeciwnika
             if rating < min_rating:
