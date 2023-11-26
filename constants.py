@@ -1,12 +1,13 @@
 # Author: Maciej Mucha
 
-# constants.py - Plik przechowujący klase pomocnicze
+# constants.py - Plik przechowujący klasy i zmienne pomocnicze
 
 from dataclasses import dataclass
 from enum import Enum
 
 # Czas zatrzymania programu po wizualizacji
 sleep_time: int = 1
+# Limit rekursji
 recursion_limit = 100000
 
 
@@ -29,9 +30,8 @@ class Tree_size_test:
     call_counter: int = -1
     tree_range: list[int] = []
     max_depth: int = 0
-    call_limit: int = 1000000
+    call_limit: int = 100000  # Limit wywołań
     tree_size: int = None
-    tree_size_no_prune: int = None
 
 
 # Enum reprezentujący rodzaje gracza na planszy

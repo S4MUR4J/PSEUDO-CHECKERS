@@ -163,6 +163,7 @@ class Game:
         any_white_checker = False
         any_red_checker = False
 
+        # Znajdowanie warcab obydwu graczy
         for x in range(self.board_size):
             for y in range(self.board_size):
                 if self.board[x][y] == Player.White:
@@ -170,6 +171,7 @@ class Game:
                 elif self.board[x][y] == Player.Red:
                     any_red_checker = True
 
+                # Skończ jak znalezione przynajmniej jedne warcaby obydwu graczy
                 if any_white_checker and any_red_checker:
                     return
 
@@ -180,8 +182,9 @@ class Game:
         self, pos: Vector2, must_capture: bool = False
     ) -> list[Vector2]:
         possible_moves = []
-        directions = Directions().get()
+        directions = Directions().get()  # Wektor możliwych kierunków
 
+        # Walidacja czy odpowiedni gracz przeszukiwany
         if self.board[pos.x][pos.y] == self.curr_player:
             for dir in directions:
                 new_pos = Vector2(pos.x + dir.x, pos.y + dir.y)
@@ -239,6 +242,7 @@ class Game:
         self.__move_checker(old_pos, new_pos, real_move)  # Wykonanie ruchu
         self.__are_checkers_on_board()  # Sprawdzenie czy istnieją warcaby gracza
 
+        # Zakończ jeśli gra została skończona
         if self.is_end_game:
             return
 

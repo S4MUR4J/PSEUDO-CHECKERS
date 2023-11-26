@@ -79,7 +79,8 @@ def minimax_algorithm(
         )  # Zwraca najmniejszą ocenę i najlepszy ruch przeciwnika
 
 
-def test_approximate_size_of_decision_tree(
+# Funkcja badająca wykonanie algorytmu minimax gdyby miał nieskończoną głębokość
+def test_aproximate_size_of_decision_tree(
     game: Game,
     alpha: int,
     beta: int,
@@ -87,14 +88,16 @@ def test_approximate_size_of_decision_tree(
     curr_depth: int,
     tst: Tree_size_test,
 ) -> int:
-    tst.call_counter += 1
-    tst.max_depth = max(tst.max_depth, curr_depth)
+    tst.call_counter += 1  # Licznik wywołań rekursywnych
+    tst.max_depth = max(
+        tst.max_depth, curr_depth
+    )  # Zarządzanie znajdowaną największą głębokością drzewa
 
     if game.is_end_game:
         return game.get_player_rating(game.curr_player)
 
     possible_moves = game.all_possible_moves()
-    tst.tree_range.append(len(possible_moves))
+    tst.tree_range.append(len(possible_moves))  # Zapis wielkości rozgałęzień
 
     if max_player:
         max_rating = Infinity.minus
@@ -102,7 +105,7 @@ def test_approximate_size_of_decision_tree(
         for move in possible_moves:
             game_copy = game.deep_copy()
             game_copy.play_turn(move[1], move[0])
-            rating = test_approximate_size_of_decision_tree(
+            rating = test_aproximate_size_of_decision_tree(
                 game=game_copy,
                 alpha=alpha,
                 beta=beta,
@@ -110,7 +113,9 @@ def test_approximate_size_of_decision_tree(
                 curr_depth=curr_depth + 1,
                 tst=tst,
             )
-            if tst.call_counter > tst.call_limit:
+            if (
+                tst.call_counter > tst.call_limit
+            ):  # Wychodzenie z rekursji, gdy koniec analizy
                 break
             if rating > max_rating:
                 max_rating = rating
@@ -124,7 +129,7 @@ def test_approximate_size_of_decision_tree(
         for move in possible_moves:
             game_copy = game.deep_copy()
             game_copy.play_turn(move[1], move[0])
-            rating = test_approximate_size_of_decision_tree(
+            rating = test_aproximate_size_of_decision_tree(
                 game=game_copy,
                 alpha=alpha,
                 beta=beta,
@@ -132,7 +137,9 @@ def test_approximate_size_of_decision_tree(
                 curr_depth=curr_depth + 1,
                 tst=tst,
             )
-            if tst.call_counter > tst.call_limit:
+            if (
+                tst.call_counter > tst.call_limit
+            ):  # Wychodzenie z rekursji gdy koniec analizy
                 break
             if rating < min_rating:
                 min_rating = rating

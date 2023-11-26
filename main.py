@@ -64,10 +64,10 @@ def __print_save_raport(
         f"Raport badania rozmiaru drzewa mini-max w grze w warcaby: \n\n",
         f"Srednia rozpietosc drzewa: {round(sum(tst.tree_range) / len(tst.tree_range), 2)}\n"
         f"Najglebiej polozony wezel: {tst.max_depth} \n"
-        f"Oszacowany rozmiar drzewa mini-maks na podstawie limitu {tst.call_limit} wywolan rekursji: {tst.tree_size}\n"
-        f"-------------------------------------------------------------\n"
-        f"Raport algorytmu mini-max w grze w warcaby dla glebokosci: {depth}: \n\n",
-        f"Tryb przeciwnika: {enemy_mode.value}"
+        f"Oszacowany rozmiar drzewa mini-maks na podstawie limitu {tst.call_limit} wywolan rekursji: {tst.tree_size}\n\n"
+        f"-------------------------------------------------------------\n\n"
+        f"Raport algorytmu mini-max w grze w warcaby dla glebokosci {depth}: \n\n",
+        f"Tryb przeciwnika: {enemy_mode.value} \n\n"
         f"Gra wykonana na warcabnicy: {board_size} x {board_size}. \n",
         f'Rozgrywke wygral: {"Bialy" if white_score > red_score else "Czerwony"}. \n',
         f"Gracz Bialy wykonal ruchow: {math.ceil(tour_count / 2)}\n",
@@ -121,7 +121,7 @@ def __estimate_tree_size(game: Game, tst: Tree_size_test) -> None:
     os.system("cls")
     print("Trwa szacowanie rozmiaru drzewa mini-max...")
     game_copy = game.deep_copy()
-    test_approximate_size_of_decision_tree(
+    test_aproximate_size_of_decision_tree(
         game=game_copy,
         alpha=Infinity.minus,
         beta=Infinity.plus,
@@ -132,9 +132,6 @@ def __estimate_tree_size(game: Game, tst: Tree_size_test) -> None:
     tst.tree_size = int(
         math.ceil(sum(tst.tree_range) / len(tst.tree_range)) ** (tst.max_depth / 2)
     )  # Na podstawie wzoru b^(d/2) dla najlepszego przeszukiwania
-    tst.tree_size_no_prune = int(
-        (sum(tst.tree_range) / len(tst.tree_range)) ** (tst.max_depth)
-    )
     input(
         f"Maksymalna głębokość drzewa dla tej planszy to {tst.max_depth}, wciśnij Enter by kontynuować."
     )
@@ -146,18 +143,20 @@ def __visualization(board: list[list[Player]], board_size: int, move: str) -> No
     os.system("cls")
     __draw_checkboard(board, board_size)
     print(move)
-    sleep(sleep_time)
+    sleep(sleep_time)  # Zatrzymaj program na czas określony w constants
 
 
 # Funkcja zwracająca parametry symulacji na podstawie decyzji uzytkownika
 def __get_game_parameters() -> int | int | int | bool | Tree_size_test:
-    checkboard_size = get_int_input("Prosze o podanie rozmiaru szachownicy: ", 3)
-    # Oszaczowanie rozmaru drzewa przy maksymalnym milionie wywołań rekursji
+    checkboard_size = get_int_input("Prosze o podanie rozmiaru warcabnicy: ", 3)
+
+    # Oszacowanie rozmaru drzewa przy maksymalnym milionie wywołań rekursji
     tst = Tree_size_test()
     __estimate_tree_size(Game(checkboard_size), tst)
     tree_depth = get_int_input(
         "Prosze o podanie maksymalnej glebokosci drzewa mini-max: ", 1
     )
+
     enemy_mode = get_int_to_mode_input()
     with_visual = get_yes_no_input("Czy wykonać program z wizualizacją [T/N]: ")
     return checkboard_size, tree_depth, enemy_mode, with_visual, tst
