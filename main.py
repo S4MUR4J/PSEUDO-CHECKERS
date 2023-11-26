@@ -112,7 +112,7 @@ def __visualization(board: list[list[Player]], board_size: int, move: str) -> No
 
 
 # Funkcja zwracająca parametry symulacji na podstawie decyzji uzytkownika
-def __get_game_parameters() -> int | int | int | int | bool | float:
+def __get_game_parameters() -> int | int | bool:
     checkboard_size = get_int_input("Prosze o podanie rozmiaru szachownicy: ")
     enemy_mode = get_int_to_mode_input()
     with_visual = get_yes_no_input("Czy wykonać program z wizualizacją [T/N]: ")
@@ -168,17 +168,10 @@ def main() -> None:
 
         # Ruch wybierany na podstawie parametrów i aktualnego gracza
         move = __move_decider(game, enemy_mode)
-        if move:
-            game.play_turn(move[1], move[0])
+        game.play_turn(move[1], move[0])
 
     # Zakończenie programu poprzez generowanie raportu oraz informacje
-    __end_simulation(
-        board_size=board_size,
-        white_score=game.white_score,
-        red_score=game.red_score,
-        move_history=game.move_history,
-        tour_count=game.tour_count,
-    )
+    __end_simulation(game)
 
 
 if __name__ == "__main__":

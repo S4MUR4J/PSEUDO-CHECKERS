@@ -1,6 +1,6 @@
 # Author: Maciej Mucha
 
-# game.py Reprazentacja problemu wykonana za pomocą klasy gry
+# game.py - Reprazentacja problemu wykonana za pomocą klasy gry
 # odpowiadającą za przechowywanie informacji na temat rozgrywki
 # i wykonywanie operacji na niej
 
