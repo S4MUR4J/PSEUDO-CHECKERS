@@ -49,9 +49,9 @@ class Points(Enum):
 
 # Enum reprezentujący rodzaje trybów podejmowania decyzji przeciwnika
 class EnemyMode(Enum):
-    random = "1"
-    suboptimal = "2"
-    minimax = "3"
+    random = "Losowy"
+    suboptimal = "Suboptymalny"
+    minimax = "Mini-max"
 
 
 # Klasa reprezentująca kierunki ruchu graczy

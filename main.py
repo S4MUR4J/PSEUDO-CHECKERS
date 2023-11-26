@@ -53,6 +53,7 @@ def __print_save_raport(
     tour_count: int,
     tst: Tree_size_test,
     depth: int,
+    enemy_mode: EnemyMode,
 ) -> None:
     # Przygotowanie nazwy pliku na podstawie aktualnej daty i godziny
     file_name = f"MINI_MAX_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
@@ -66,6 +67,7 @@ def __print_save_raport(
         f"Oszacowany rozmiar drzewa mini-maks na podstawie limitu {tst.call_limit} wywolan rekursji: {tst.tree_size}\n"
         f"-------------------------------------------------------------\n"
         f"Raport algorytmu mini-max w grze w warcaby dla glebokosci: {depth}: \n\n",
+        f"Tryb przeciwnika: {enemy_mode.value}"
         f"Gra wykonana na warcabnicy: {board_size} x {board_size}. \n",
         f'Rozgrywke wygral: {"Bialy" if white_score > red_score else "Czerwony"}. \n',
         f"Gracz Bialy wykonal ruchow: {math.ceil(tour_count / 2)}\n",
@@ -97,7 +99,9 @@ def __print_save_raport(
 
 # Funkcja zatrzymująca program na końcu symulacji,
 # wywołuje generowanie raportu i zakończa program po wciśnięciu Enter
-def __end_simulation(game: Game, tst: Tree_size_test, tree_depth: int) -> None:
+def __end_simulation(
+    game: Game, tst: Tree_size_test, tree_depth: int, enemy_mode: EnemyMode
+) -> None:
     __print_save_raport(
         board_size=game.board_size,
         white_score=game.white_score,
@@ -106,6 +110,7 @@ def __end_simulation(game: Game, tst: Tree_size_test, tree_depth: int) -> None:
         tour_count=game.tour_count,
         tst=tst,
         depth=tree_depth,
+        enemy_mode=enemy_mode,
     )
     input("Wciśnij Enter by zakończyć program...")
     os.system("cls")
@@ -213,7 +218,7 @@ def main() -> None:
         game.play_turn(move[1], move[0], True)
 
     # Zakończenie programu poprzez generowanie raportu oraz informacje
-    __end_simulation(game, tst, tree_depth)
+    __end_simulation(game, tst, tree_depth, enemy_mode)
 
 
 if __name__ == "__main__":
