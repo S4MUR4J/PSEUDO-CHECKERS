@@ -51,6 +51,8 @@ def __print_save_raport(
     red_score: int,
     move_history: list[str],
     tour_count: int,
+    tst: Tree_size_test,
+    depth: int,
 ) -> None:
     # Przygotowanie nazwy pliku na podstawie aktualnej daty i godziny
     file_name = f"MINI_MAX_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
@@ -58,7 +60,12 @@ def __print_save_raport(
     # Przygotowanie danych i struktury raportu
     raport = [
         "-------------------------------------------------------------\n",
-        "Raport algorytmu mini-max w grze w warcaby: \n\n",
+        f"Raport badania rozmiaru drzewa mini-max w grze w warcaby: \n\n",
+        f"Srednia rozpietosc drzewa: {round(sum(tst.tree_range) / len(tst.tree_range), 2)}\n"
+        f"Najglebiej polozony wezel: {tst.max_depth} \n"
+        f"Oszacowany rozmiar drzewa mini-maks na podstawie limitu {tst.call_limit} wywolan: {tst.tree_size}\n"
+        f"-------------------------------------------------------------\n"
+        f"Raport algorytmu mini-max w grze w warcaby dla głębokości: {depth}: \n\n",
         f"Gra wykonana na warcabnicy: {board_size} x {board_size}. \n",
         f'Rozgrywke wygral: {"Bialy" if white_score > red_score else "Czerwony"}. \n',
         f"Gracz Bialy wykonal ruchow: {math.ceil(tour_count / 2)}\n",
@@ -90,15 +97,39 @@ def __print_save_raport(
 
 # Funkcja zatrzymująca program na końcu symulacji,
 # wywołuje generowanie raportu i zakończa program po wciśnięciu Enter
-def __end_simulation(game: Game) -> None:
+def __end_simulation(game: Game, tst: Tree_size_test, tree_depth: int) -> None:
     __print_save_raport(
         board_size=game.board_size,
         white_score=game.white_score,
         red_score=game.red_score,
         move_history=game.move_history,
         tour_count=game.tour_count,
+        tst=tst,
+        depth=tree_depth,
     )
     input("Wciśnij Enter by zakończyć program...")
+    os.system("cls")
+
+
+# Oblicza oszacowaną wartość rozmiaru drzewa mini-maks przy limicie wywołań rekursywnych
+def __estimate_tree_size(game: Game, tst: Tree_size_test) -> None:
+    os.system("cls")
+    print("Trwa szacowanie rozmiaru drzewa mini-max...")
+    game_copy = game.deep_copy()
+    test_approximate_size_of_decision_tree(
+        game=game_copy,
+        alpha=Infinity.minus,
+        beta=Infinity.plus,
+        max_player=game.curr_player,
+        curr_depth=1,
+        tst=tst,
+    )
+    tst.tree_size = int(
+        (sum(tst.tree_range) / len(tst.tree_range)) ** (tst.max_depth / 2)
+    )  # Na podstawie wzoru b^(d/2) dla najlepszego przeszukiwania
+    tst.tree_size_no_prune = int(
+        (sum(tst.tree_range) / len(tst.tree_range)) ** (tst.max_depth)
+    )
     os.system("cls")
 
 
@@ -112,17 +143,21 @@ def __visualization(board: list[list[Player]], board_size: int, move: str) -> No
 
 
 # Funkcja zwracająca parametry symulacji na podstawie decyzji uzytkownika
-def __get_game_parameters() -> int | int | bool:
+def __get_game_parameters() -> int | int | int | bool:
     checkboard_size = get_int_input("Prosze o podanie rozmiaru szachownicy: ")
+    tree_depth = get_int_input(
+        "Prosze o podanie maksymalnej glebokosci drzewa mini-max: "
+    )
     enemy_mode = get_int_to_mode_input()
     with_visual = get_yes_no_input("Czy wykonać program z wizualizacją [T/N]: ")
-    return checkboard_size, enemy_mode, with_visual
+    return checkboard_size, tree_depth, enemy_mode, with_visual
 
 
 # Funkcja zwracająca najlepszy ruch wyznaczony przy uzyciu algorytmu minimax
-def __minimax_move(game: Game) -> (Vector2, Vector2):
+def __minimax_move(game: Game, tree_depth: int) -> (Vector2, Vector2):
     _, move = minimax_algorithm(
         game=game,
+        depth=tree_depth,
         alpha=Infinity.minus,
         beta=Infinity.plus,
         max_player=game.curr_player,
@@ -132,9 +167,9 @@ def __minimax_move(game: Game) -> (Vector2, Vector2):
 
 # Funkcja dobierająca odpowiednia metode wyznaczenia ruchu na podstawie
 # tego, ktorego gracza jest tura i parametrów symulacji
-def __move_decider(game: Game, enemy_mode: EnemyMode) -> (Vector2, Vector2):
+def __move_decider(game: Game, enemy_mode: EnemyMode, tree_depth) -> (Vector2, Vector2):
     if game.curr_player == Player.White:
-        return __minimax_move(game)
+        return __minimax_move(game, tree_depth)
     else:
         if enemy_mode == EnemyMode.random:
             return random_move(game)
@@ -142,18 +177,23 @@ def __move_decider(game: Game, enemy_mode: EnemyMode) -> (Vector2, Vector2):
         elif enemy_mode == EnemyMode.suboptimal:
             return suboptimal_move(game.deep_copy())
         else:
-            return __minimax_move(game)
+            return __minimax_move(game, tree_depth)
 
 
 def main() -> None:
     sys.setrecursionlimit(100000)
     (
         board_size,
+        tree_depth,
         enemy_mode,
         with_visual,
     ) = __get_game_parameters()  # Wczytanie potrzebnych parametrów
 
     game = Game(board_size)  # Stworzenie instancji gry
+
+    # Oszaczowanie rozmaru drzewa przy maksymalnym milionie wywołań rekursji
+    tst = Tree_size_test()
+    __estimate_tree_size(game, tst)
 
     # Pętla symulacji kończy się wraz z zakończeniem gry
     while True:
@@ -167,11 +207,11 @@ def main() -> None:
             break
 
         # Ruch wybierany na podstawie parametrów i aktualnego gracza
-        move = __move_decider(game, enemy_mode)
+        move = __move_decider(game, enemy_mode, tree_depth)
         game.play_turn(move[1], move[0])
 
     # Zakończenie programu poprzez generowanie raportu oraz informacje
-    __end_simulation(game)
+    __end_simulation(game, tst, tree_depth)
 
 
 if __name__ == "__main__":

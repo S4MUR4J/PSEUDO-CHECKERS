@@ -23,6 +23,16 @@ class Infinity:
     plus: float = float("inf")
 
 
+# Klasa przechowująca informację na temat oszacowywania rozmiaru drzewa mini-max
+class Tree_size_test:
+    call_counter: int = -1
+    tree_range: list[int] = []
+    max_depth: int = 0
+    call_limit: int = 1000000
+    tree_size: int = None
+    tree_size_no_prune: int = None
+
+
 # Enum reprezentujący rodzaje gracza na planszy
 class Player(Enum):
     White = "W"
