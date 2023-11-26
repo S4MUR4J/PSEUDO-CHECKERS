@@ -9,10 +9,6 @@ from constants import Infinity, Player, Vector2
 from game import Game
 
 
-def get_current_search_player(max_player: bool) -> Player:
-    Player.Red if max_player == Player.White else Player.White
-
-
 def minimax_algorithm(
     game: Game, alpha: int, beta: int, max_player: bool, curr_depth: int = 1
 ) -> int | Vector2:
@@ -91,9 +87,9 @@ def suboptimal_move(game: Game) -> (Vector2, Vector2):
     max_rating = Infinity.minus
 
     for move in game.all_possible_moves():
-        game_inner = game
-        game_inner.play_turn(move[1], move[0])
-        curr_rating = game_inner.get_player_rating(Player.Red)
+        game_copy = game.deep_copy()
+        game_copy.play_turn(move[1], move[0])
+        curr_rating = game_copy.get_player_rating(Player.Red)
         if curr_rating > max_rating:
             max_rating = curr_rating
             best_move = move

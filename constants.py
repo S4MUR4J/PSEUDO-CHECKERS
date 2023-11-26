@@ -1,9 +1,12 @@
 # Author: Maciej Mucha
 
-# constants.py Plik przechowujący klase pomocnicze
+# constants.py - Plik przechowujący klase pomocnicze
 
 from dataclasses import dataclass
 from enum import Enum
+
+# Czas zatrzymania programu po wizualizacji
+sleep_time: int = 1
 
 
 # Klasa przechowująca pozycję na planszy X | Y

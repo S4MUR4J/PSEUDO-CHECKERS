@@ -18,13 +18,13 @@ import sys
 from datetime import datetime
 from time import sleep
 
-from constants import EnemyMode, Infinity, Player, Vector2
+from constants import EnemyMode, Infinity, Player, Vector2, sleep_time
 from game import Game
 from input import *
 from method import *
 
 
-# Funkcja rysująca akualny stan planszy w konsoli
+# Funkcja wizualizująca akualny stan planszy w konsoli
 def __draw_checkboard(board: list[list[Player]], board_size: int) -> None:
     for x in range(board_size):
         if x == 0:
@@ -44,36 +44,7 @@ def __draw_checkboard(board: list[list[Player]], board_size: int) -> None:
     print("")
 
 
-# Funkcja zatrzymująca program na końcu symulacji,
-# zakończenie programu po wciśnięciu Enter
-def end_simulation(
-    board_size: int,
-    white_score: int,
-    red_score: int,
-    move_history: list[str],
-    tour_count: int,
-) -> None:
-    __print_save_raport(
-        board_size=board_size,
-        white_score=white_score,
-        red_score=red_score,
-        move_history=move_history,
-        tour_count=tour_count,
-    )
-    input("Wciśnij Enter by zakończyć program...")
-    os.system("cls")
-
-
-# Funkcja odpowiadająca za wywołanie potrzebnych,
-# funkcji w celu wizualizacji aktualnej tury
-def visualization(board: list[list[Player]], board_size: int, move: str) -> None:
-    os.system("cls")
-    __draw_checkboard(board, board_size)
-    print(move)
-    sleep(0.1)
-
-
-# Funkcja przygotowująca i zapisująca raport do pliku w folderze projektu
+# Funkcja przygotowująca, drukująca i zapisująca raport do pliku w folderze projektu
 def __print_save_raport(
     board_size: int,
     white_score: int,
@@ -115,6 +86,29 @@ def __print_save_raport(
 
     # Powiadomienie o wygenerowanym pliku
     print(f"W folderze projektu został wygenerowany raport: {file_name}... \n")
+
+
+# Funkcja zatrzymująca program na końcu symulacji,
+# wywołuje generowanie raportu i zakończa program po wciśnięciu Enter
+def __end_simulation(game: Game) -> None:
+    __print_save_raport(
+        board_size=game.board_size,
+        white_score=game.white_score,
+        red_score=game.red_score,
+        move_history=game.move_history,
+        tour_count=game.tour_count,
+    )
+    input("Wciśnij Enter by zakończyć program...")
+    os.system("cls")
+
+
+# Funkcja odpowiadająca za wywołanie potrzebnych,
+# funkcji w celu wizualizacji aktualnej tury
+def __visualization(board: list[list[Player]], board_size: int, move: str) -> None:
+    os.system("cls")
+    __draw_checkboard(board, board_size)
+    print(move)
+    sleep(sleep_time)
 
 
 # Funkcja zwracająca parametry symulacji na podstawie decyzji uzytkownika
@@ -165,7 +159,7 @@ def main() -> None:
     while True:
         # Wykonanie wizualizacji zgodnie z parametrem
         if with_visual:
-            visualization(
+            __visualization(
                 board=game.board, board_size=board_size, move=game.move_history[-1]
             )
         # Koniec gry wyjscie z petli
@@ -178,7 +172,7 @@ def main() -> None:
             game.play_turn(move[1], move[0])
 
     # Zakończenie programu poprzez generowanie raportu oraz informacje
-    end_simulation(
+    __end_simulation(
         board_size=board_size,
         white_score=game.white_score,
         red_score=game.red_score,
