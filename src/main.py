@@ -1,12 +1,15 @@
 import math
+import os
 import sys
 from datetime import datetime
 from time import sleep
 
-from constants import *
-from game import Game
-from input import *
-from method import *
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from src.constants import *
+from src.game import Game
+from src.input import *
+from src.method import *
 
 
 def __draw_checkboard(board: list[list[Player]], board_size: int) -> None:
@@ -111,7 +114,7 @@ def __visualization(board: list[list[Player]], board_size: int, move: str) -> No
     sleep(sleep_time)
 
 
-def __get_game_parameters() -> int | int | int | bool | Tree_size_test:
+def __get_game_parameters() -> tuple[int, int, EnemyMode, bool, Tree_size_test]:
     checkboard_size = get_int_input("Please enter the board size: ", 3)
 
     tst = Tree_size_test()
@@ -125,7 +128,7 @@ def __get_game_parameters() -> int | int | int | bool | Tree_size_test:
     return checkboard_size, tree_depth, enemy_mode, with_visual, tst
 
 
-def __minimax_move(game: Game, tree_depth: int) -> (Vector2, Vector2):
+def __minimax_move(game: Game, tree_depth: int) -> tuple[Vector2, Vector2]:
     _, move = minimax_algorithm(
         game=game,
         depth=tree_depth,
@@ -136,7 +139,7 @@ def __minimax_move(game: Game, tree_depth: int) -> (Vector2, Vector2):
     return move
 
 
-def __move_decider(game: Game, enemy_mode: EnemyMode, tree_depth) -> (Vector2, Vector2):
+def __move_decider(game: Game, enemy_mode: EnemyMode, tree_depth) -> tuple[Vector2, Vector2]:
     if game.curr_player == Player.White:
         return __minimax_move(game, tree_depth)
     else:

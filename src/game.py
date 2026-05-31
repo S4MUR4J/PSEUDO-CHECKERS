@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from constants import Directions, Player, Points, Vector2
+from src.constants import Directions, Player, Points, Vector2
 
 
 class Game:
@@ -180,7 +180,7 @@ class Game:
 
         return possible_moves
 
-    def all_possible_moves(self) -> list[(Vector2, Vector2)]:
+    def all_possible_moves(self) -> list[tuple[Vector2, Vector2]]:
         all_possible_moves = []
         must_capture = self.__capture_duty()
 

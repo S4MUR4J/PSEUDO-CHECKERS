@@ -1,7 +1,7 @@
 import random
 
-from constants import Infinity, Player, Tree_size_test, Vector2
-from game import Game
+from src.constants import Infinity, Tree_size_test, Vector2
+from src.game import Game
 
 
 def minimax_algorithm(
@@ -119,7 +119,7 @@ def test_aproximate_size_of_decision_tree(
 
 
 # Evaluates only one move ahead, hence "suboptimal"
-def suboptimal_move(game: Game) -> (Vector2, Vector2):
+def suboptimal_move(game: Game) -> tuple[Vector2, Vector2]:
     best_move = None
     max_rating = Infinity.minus
 
@@ -134,7 +134,7 @@ def suboptimal_move(game: Game) -> (Vector2, Vector2):
     return best_move
 
 
-def random_move(game: Game) -> (Vector2, Vector2):
+def random_move(game: Game) -> tuple[Vector2, Vector2]:
     moves = game.all_possible_moves()
 
     if moves:

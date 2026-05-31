@@ -1,6 +1,6 @@
 import os
 
-from constants import EnemyMode
+from src.constants import EnemyMode
 
 
 def __wrong_input() -> None:
