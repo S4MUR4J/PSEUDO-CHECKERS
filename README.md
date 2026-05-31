@@ -3,7 +3,7 @@
 Configurable checkers simulation driven by a minimax AI with alpha-beta pruning. Supports multiple opponent modes, step-by-step board visualization, and game tree complexity analysis with a generated report.
 
 <p align="center">
-  <img src="demo.gif" alt="demo">
+  <img src="demo.gif" alt="demo" width="100%">
 </p>
 
 ## Features
