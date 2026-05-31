@@ -1,18 +1,12 @@
-# Author : Maciej Mucha
-
-# input.py - Plik przechowujący funkcje odpowiadające za odczyt danych wejściowych użytkownika i ich walidację
-
 import os
 
 from constants import EnemyMode
 
 
-# Funkcja informująca o niepoprawnie wprowadzonej informacji
 def __wrong_input() -> None:
-    input("Nieprawidłowa decyzja, naciśnij klawisz by powtórzyć...")
+    input("Invalid input, press any key to try again...")
 
 
-# Funkcja czytająca i walidująca dane wejściowe typu int
 def get_int_input(message: str, min: int) -> int:
     while True:
         os.system("cls")
@@ -23,34 +17,32 @@ def get_int_input(message: str, min: int) -> int:
         else:
             if value >= min:
                 return value
-            print(f"Zbyt mała wartość, wartość minimalna: {min}")
+            print(f"Value too small, minimum value: {min}")
             __wrong_input()
 
 
-# Funkcja czytająca i walidująca dane wejściowe wybóru TAK/NIE
 def get_yes_no_input(message: str) -> bool:
     choice = ""
     while True:
         os.system("cls")
         choice = str(input(message))
-        if choice.upper() == str("T"):
+        if choice.upper() == str("Y"):
             return True
         if choice.upper() == str("N"):
             return False
         __wrong_input()
 
 
-# Funkcja czytająca i walidująca dane wejściowe wybóru trybu gry przeciwnika
 def get_int_to_mode_input() -> EnemyMode:
     while True:
         os.system("cls")
-        print("Tryby gry przeciwnika")
-        print("1. Losowy")
-        print("2. Suboptymalny")
+        print("Opponent game modes")
+        print("1. Random")
+        print("2. Suboptimal")
         print("3. Minimax")
 
         try:
-            value = int(input("Proszę o wybranie trybu przeciwnika [1-3]: "))
+            value = int(input("Please select opponent mode [1-3]: "))
         except ValueError:
             __wrong_input()
         else:
@@ -63,6 +55,3 @@ def get_int_to_mode_input() -> EnemyMode:
                     return EnemyMode.minimax
 
             __wrong_input()
-
-
-# EOF

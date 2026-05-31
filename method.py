@@ -1,8 +1,3 @@
-# Author: Maciej Mucha
-
-# method.py - Realizacja zadanej metody sztucznej inteligencji mini-max
-# oraz funkcji znajdowania suboptymalnego i losowego ruchu
-
 import random
 
 from constants import Infinity, Player, Tree_size_test, Vector2
@@ -12,74 +7,54 @@ from game import Game
 def minimax_algorithm(
     game: Game, depth: int, alpha: int, beta: int, max_player: bool
 ) -> int | Vector2:
-    # Sprawdzenie czy gra została skończona
     if depth == 0 or game.is_end_game:
-        return (
-            game.get_player_rating(game.curr_player),
-            None,
-        )  # Ocena stanu gry dla gracza maksymalizującego, bez najlepszego ruchu
+        return game.get_player_rating(game.curr_player), None
 
     best_move = None
 
-    # Sprawdzanie na gracza maksymalizującego
     if max_player:
-        max_rating = (
-            Infinity.minus
-        )  # Dla początku rozpatrywania drzewa nieosiągalna wartość
+        max_rating = Infinity.minus
 
-        # Rozpatrywanie każdego możliwego ruchu z danego stanu gry
         for move in game.all_possible_moves():
             game_copy = game.deep_copy()
-            game_copy.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
+            game_copy.play_turn(move[1], move[0])
             rating, _ = minimax_algorithm(
                 game=game_copy,
                 depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
                 max_player=False,
-            )  # Rozpatrzenie stanu gry po wykonanym ruchu
-            # Czy jest to do tej pory najlepszy stan gry dla gracza
+            )
             if rating > max_rating:
                 max_rating = rating
                 best_move = move
-            alpha = max(alpha, rating)  # Podmiana alfy gdy większa niż dotychczas
-            # Cięcie alfa-beta
-            if beta <= alpha:
+            alpha = max(alpha, rating)
+            if beta <= alpha:  # Alpha-beta cut
                 break
-        return max_rating, best_move  # Zwraca największą ocenę i najlepszy ruch gracza
+        return max_rating, best_move
 
-    # Sprawdzenie dla gracza minimalizującego
     else:
-        min_rating = (
-            Infinity.plus
-        )  # Dla początku rozpatrywania drzewa nieosiągalna wartość
+        min_rating = Infinity.plus
 
-        # Rozpatrywanie każdego możliwego ruchu z danego stanu gry
         for move in game.all_possible_moves():
             game_copy = game.deep_copy()
-            game_copy.play_turn(move[1], move[0])  # Wykonanie ruchu na kopii
+            game_copy.play_turn(move[1], move[0])
             rating, _ = minimax_algorithm(
                 game=game_copy,
                 depth=depth - 1,
                 alpha=alpha,
                 beta=beta,
                 max_player=True,
-            )  # Rozpatrzenie stanu gry po wykonanym ruchu
-            # Czy jest to do tej pory stan gry dla przeciwnika
+            )
             if rating < min_rating:
                 min_rating = rating
                 best_move = move
-            beta = min(beta, rating)  # Podmiana bety gdy większa niż dotychczas
-            # Cięcie alfa-beta
-            if beta <= alpha:
+            beta = min(beta, rating)
+            if beta <= alpha:  # Alpha-beta cut
                 break
-        return (
-            min_rating,
-            best_move,
-        )  # Zwraca najmniejszą ocenę i najlepszy ruch przeciwnika
+        return min_rating, best_move
 
 
-# Funkcja badająca wykonanie algorytmu minimax gdyby miał nieskończoną głębokość
 def test_aproximate_size_of_decision_tree(
     game: Game,
     alpha: int,
@@ -88,16 +63,14 @@ def test_aproximate_size_of_decision_tree(
     curr_depth: int,
     tst: Tree_size_test,
 ) -> int:
-    tst.call_counter += 1  # Licznik wywołań rekursywnych
-    tst.max_depth = max(
-        tst.max_depth, curr_depth
-    )  # Zarządzanie znajdowaną największą głębokością drzewa
+    tst.call_counter += 1
+    tst.max_depth = max(tst.max_depth, curr_depth)
 
     if game.is_end_game:
         return game.get_player_rating(game.curr_player)
 
     possible_moves = game.all_possible_moves()
-    tst.tree_range.append(len(possible_moves))  # Zapis wielkości rozgałęzień
+    tst.tree_range.append(len(possible_moves))  # Record branching factor at this depth
 
     if max_player:
         max_rating = Infinity.minus
@@ -113,9 +86,7 @@ def test_aproximate_size_of_decision_tree(
                 curr_depth=curr_depth + 1,
                 tst=tst,
             )
-            if (
-                tst.call_counter > tst.call_limit
-            ):  # Wychodzenie z rekursji, gdy koniec analizy
+            if tst.call_counter > tst.call_limit:  # Stop analysis after reaching the call limit
                 break
             if rating > max_rating:
                 max_rating = rating
@@ -137,9 +108,7 @@ def test_aproximate_size_of_decision_tree(
                 curr_depth=curr_depth + 1,
                 tst=tst,
             )
-            if (
-                tst.call_counter > tst.call_limit
-            ):  # Wychodzenie z rekursji gdy koniec analizy
+            if tst.call_counter > tst.call_limit:  # Stop analysis after reaching the call limit
                 break
             if rating < min_rating:
                 min_rating = rating
@@ -149,8 +118,7 @@ def test_aproximate_size_of_decision_tree(
         return min_rating
 
 
-# Funkcja znajdująca najlepszy ruch dla aktualnego stanu planszy,
-# Rozpatrując tylko ocenę dla jednego ruchu w przód
+# Evaluates only one move ahead, hence "suboptimal"
 def suboptimal_move(game: Game) -> (Vector2, Vector2):
     best_move = None
     max_rating = Infinity.minus
@@ -166,13 +134,9 @@ def suboptimal_move(game: Game) -> (Vector2, Vector2):
     return best_move
 
 
-# Funkcja zwracająca pseudolosowo wybrany ruch z mozliwych do wykonania
 def random_move(game: Game) -> (Vector2, Vector2):
     moves = game.all_possible_moves()
 
     if moves:
         move = random.choice(moves)
         return move
-
-
-# EOF
